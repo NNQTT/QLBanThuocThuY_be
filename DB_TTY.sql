@@ -17,10 +17,15 @@ CREATE TABLE NhomThuoc (
 	CONSTRAINT PK_NhomThuoc PRIMARY KEY (MaNhomThuoc),
 );
 
+CREATE TABLE LoaiSuDung (
+    MaLoai INT IDENTITY NOT NULL,
+	TenLoai NVARCHAR(255),
+	CONSTRAINT PK_LoaiSuDung PRIMARY KEY (MaLoai),
+);
+
 CREATE TABLE Thuoc (
     MaThuoc INT IDENTITY NOT NULL,
     TenThuoc NVARCHAR(255),
-    LoaiSD NVARCHAR(255),
     GiaBan FLOAT,
     DangBaoChe NVARCHAR(255),
     QCDongGoi NVARCHAR(255),
@@ -29,14 +34,17 @@ CREATE TABLE Thuoc (
     QuyCachDongGoi NVARCHAR(255),
     TrangThai NVARCHAR(50),
     MaNhomThuoc INT,
+	MaLoai INT,
 	CONSTRAINT PK_Thuoc PRIMARY KEY (MaThuoc),
-    CONSTRAINT FK_Thuoc_NhomThuoc FOREIGN KEY (MaNhomThuoc) REFERENCES NhomThuoc(MaNhomThuoc)
+    CONSTRAINT FK_Thuoc_NhomThuoc FOREIGN KEY (MaNhomThuoc) REFERENCES NhomThuoc(MaNhomThuoc),
+	CONSTRAINT FK_Thuoc_LoaiSuDung FOREIGN KEY (MaLoai) REFERENCES LoaiSuDung(MaLoai)
 );
 
 CREATE TABLE DanhMucHinhAnh (
-    TenDanhMuc NVARCHAR(255) NOT NULL,
+	MaDanhMuc INT IDENTITY NOT NULL,
+    TenDanhMuc NVARCHAR(255),
 	MaThuoc INT,
-	CONSTRAINT PK_DanhMucHinhAnh PRIMARY KEY (TenDanhMuc),
+	CONSTRAINT PK_DanhMucHinhAnh PRIMARY KEY (MaDanhMuc),
 	CONSTRAINT FK_DanhMucHinhAnh_Thuoc FOREIGN KEY (MaThuoc) REFERENCES Thuoc(MaThuoc)
 );
 
