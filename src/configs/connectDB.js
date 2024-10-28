@@ -1,4 +1,5 @@
 require('dotenv').config();
+import sql from 'mssql';
 
 const config = {
     user: process.env.DB_USER,
