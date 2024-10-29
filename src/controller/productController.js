@@ -38,7 +38,75 @@ const getProductById = async (req, res) => {
     }
 }
 
+const getProductsByName = async (req, res) =>{
+    let {query} = req.query;
+    console.log('query: ', query);
+    if(!query){
+        return res.status(400).json({message: 'Please enter name or use'});
+    }
+    try {
+        let pool = await connectDB();
+        let result = await pool.request()
+            .input('query', sql.NVarChar, `%${query}%`)
+            .query('SELECT * FROM Thuoc WHERE TenThuoc LIKE @query OR CongDung LIKE @query');
+        console.log(result);
+        res.status(200).json(result.recordset)
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send("Internal Server Error");
+    }
+}
+
+const getProductsSortedByPrice = async (req, res) =>{
+    try {
+        let {giaBan} = req.query;
+        let pool = await connectDB();
+        let result;
+        if(giaBan == -1){
+            result = await pool.request().query('SELECT * FROM Thuoc ORDER BY GiaBan DESC');
+        }
+        else{
+            result = await pool.request().query('SELECT * FROM Thuoc ORDER BY GiaBan ASC');
+        }
+        res.status(200).json(result.recordset);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({message: 'Internal Server Error'})
+    }
+}
+
+const getProductsFilteredByPrice = async (req, res) =>{
+    try {
+        let {giaBan} = req.query;
+        console.log('giá bán: ', giaBan);
+        let pool = await connectDB();
+        let result;
+        if(giaBan < 20000){
+            result = await pool.request().query('SELECT * FROM Thuoc WHERE GiaBan < 20000');
+        }
+        else if(giaBan >= 20000 && giaBan < 50000){
+            result = await pool.request().query('SELECT * FROM Thuoc WHERE GiaBan >= 20000 AND GiaBan < 50000');
+        }
+        else if(giaBan >= 50000 && giaBan < 100000){
+            result = await pool.request().query('SELECT * FROM Thuoc WHERE GiaBan >= 50000 AND GiaBan < 1000000');
+        }
+        else if(giaBan >= 100000 && giaBan < 200000){
+            result = await pool.request().query('SELECT * FROM Thuoc WHERE GiaBan >= 100000 AND GiaBan < 2000000');
+        }
+        else{
+            result = await pool.request().query('SELECT * FROM Thuoc WHERE GiaBan > 200000');
+        }
+        console.log(result);
+        res.status(200).json(result.recordset);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({message: 'Internal Server Error'})
+    }
+}
 module.exports = {
     getProducts,
-    getProductById
+    getProductById,
+    getProductsByName,
+    getProductsSortedByPrice,
+    getProductsFilteredByPrice
 }

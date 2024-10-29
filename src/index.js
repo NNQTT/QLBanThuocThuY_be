@@ -2,6 +2,7 @@ import express from 'express'
 import session from 'express-session'
 var cors = require('cors')
 import initApiRoutes from './route/api'
+import initProductRoute from './route/product'
 
 require('dotenv').config();
 let port = process.env.PORT || 8080;
@@ -24,6 +25,7 @@ app.use(session({
 }));
 
 initApiRoutes(app)
+initProductRoute(app)
 
 app.listen(port, () => {
     //callback
