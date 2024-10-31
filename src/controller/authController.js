@@ -13,7 +13,10 @@ const signup = async (req, res) => {
             .query('SELECT * FROM KhachHang WHERE Email = @email');
 
         if (result.recordset.length > 0) {
-            return res.status(400).send('Username already exists');
+            return res.status(400).json({
+                message: 'Email already used',
+                success: false
+            });
         } else {
             if (matkhau === confirmpass) {
                 const salt = await bcrypt.genSalt(10);
@@ -25,14 +28,23 @@ const signup = async (req, res) => {
                     .input('email', sql.NVarChar, email)
                     .query('INSERT INTO KhachHang (TenTaiKhoan, MatKhau, Email) VALUES (@tentaikhoan, @hashedPassword, @email)');
 
-                return res.status(200).send('Signup success');
+                return res.status(200).json({
+                    message: 'Signup success',
+                    success: true
+                });
             } else {
-                return res.status(400).send('Password not match');
+                return res.status(404).json({
+                    message: 'Password not match',
+                    success: false
+                });
             }
         }
     } catch (err) {
         console.log(err);
-        return res.status(500).send('Internal Server Error');
+        return res.status(500).json({
+            message: 'Internal Server Error',
+            success: false
+        });
     }
 }
 
@@ -76,17 +88,23 @@ const login = async (req, res) => {
         const result = await pool.request()
             .input('email', sql.VarChar, email)
             .query('SELECT * FROM KhachHang WHERE Email = @email');
+        if(!email) {
+            return res.status(404).json({ message: 'Email is required', success: false });
+        }
+        if(!matkhau) {
+            return res.status(404).json({ message: 'Password is required', success: false });
+        }
         if (result.recordset.length === 0) {
-            return res.status(400).send('Username not exists');
+            return res.status(400).json({ message: 'Email not found', success: false });
         }
         const validPass = await bcrypt.compare(matkhau, result.recordset[0].MatKhau);
         if (!validPass) {
-            return res.status(400).send('Invalid password');
+            return res.status(400).json({ message: 'Password invalid', success: false });
         }
-        return res.status(200).send('Login success');
+        return res.status(200).json({ message: 'Login success', success: true });
     } catch (err) {
         console.log(err);
-        return res.status(500).send('Internal Server Error');
+        return res.status(500).json({ message: 'Internal Server Error', success: false });
     }
 }
 
@@ -97,17 +115,16 @@ const loginAdmin = async (req, res) => {
         const result = await pool.request()
             .input('email', sql.VarChar, email)
             .query('SELECT * FROM QuanTri WHERE Email = @email');
-        if (result.recordset.length === 0) {
-            return res.status(400).send('Username not exists');
-        }
+
         const validPass = await bcrypt.compare(matkhau, result.recordset[0].MatKhau);
-        if (!validPass) {
-            return res.status(400).send('Invalid password');
+        
+        if (result.recordset.length === 0 || !validPass) {
+            return res.status(404).json({ message: 'Email or password invalid!', success: false });
         }
-        return res.status(200).send('Login success');
+        return res.status(200).json({ message: 'Login success', success: true });
     } catch (err) {
         console.log(err);
-        return res.status(500).send('Internal Server Error');
+        return res.status(500).json({ message: 'Internal Server Error', success: false });
     }
 }
 
