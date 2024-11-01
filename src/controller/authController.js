@@ -1,7 +1,9 @@
+require('dotenv').config();
 import { connectDB } from "../configs/connectDB";
 import axios from "axios";
 import bcrypt from "bcrypt";
 import sql from "mssql";
+const jwt = require('jsonwebtoken');
 
 const signup = async (req, res) => {
     try {
@@ -88,10 +90,10 @@ const login = async (req, res) => {
         const result = await pool.request()
             .input('email', sql.VarChar, email)
             .query('SELECT * FROM KhachHang WHERE Email = @email');
-        if(!email) {
+        if (!email) {
             return res.status(404).json({ message: 'Email is required', success: false });
         }
-        if(!matkhau) {
+        if (!matkhau) {
             return res.status(404).json({ message: 'Password is required', success: false });
         }
         if (result.recordset.length === 0) {
@@ -101,12 +103,54 @@ const login = async (req, res) => {
         if (!validPass) {
             return res.status(400).json({ message: 'Password invalid', success: false });
         }
-        return res.status(200).json({ message: 'Login success', success: true });
+        // create an access token
+        const payload = {
+            email: result.recordset[0].Email,
+            tentaikhoan: result.recordset[0].TenTaiKhoan
+        }
+        const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.JWT_EXPIRE });
+
+        // return res.status(200).json({ message: 'Login success', success: true });
+        return res.status(200).json({ accessToken, user: { email: result.recordset[0].Email, tentaikhoan: result.recordset[0].TenTaiKhoan }, message: 'Login success', success: true });
     } catch (err) {
         console.log(err);
         return res.status(500).json({ message: 'Internal Server Error', success: false });
     }
 }
+
+const getListUser = async (req, res) => {
+    try {
+        const pool = await connectDB();
+        const result = await pool.request()
+            .query('SELECT Email, TenTaiKhoan FROM KhachHang');
+        return res.status(200).json(result.recordset);
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+
+const authenticationLogin = async (req, res) => {
+  
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]; 
+
+    console.log(">>> Token:", token);
+
+    if (!token) return res.status(400).json({ message: 'Invalid Token' });
+
+    try {
+        const decode = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+        if (!decode) return res.status(400).json({ message: 'Invalid Token' });
+        return res.status(200).json({ message: 'Valid Token', data: decode });
+    } catch (err) {
+        if (err.name === 'TokenExpiredError') {
+            return res.status(400).json({ message: 'Token Expired' });
+        }
+        return res.status(400).json({ message: 'Invalid Token' });
+    }
+};
 
 const loginAdmin = async (req, res) => {
     try {
@@ -117,7 +161,7 @@ const loginAdmin = async (req, res) => {
             .query('SELECT * FROM QuanTri WHERE Email = @email');
 
         const validPass = await bcrypt.compare(matkhau, result.recordset[0].MatKhau);
-        
+
         if (result.recordset.length === 0 || !validPass) {
             return res.status(404).json({ message: 'Email or password invalid!', success: false });
         }
@@ -138,5 +182,7 @@ module.exports = {
     login,
     logout,
     signupAdmin,
-    loginAdmin
+    loginAdmin,
+    getListUser,
+    authenticationLogin
 }
