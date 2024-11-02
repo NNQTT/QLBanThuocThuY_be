@@ -147,3 +147,8 @@ INSERT INTO THUOC VALUES ('LBF-1', N'Foot And Mouth Disease Vaccine', 39100, N'D
 INSERT INTO THUOC VALUES ('ETT-94', N'ECO ERYCOL 10', 402500, N'Viên nén', N'10kg', N'Trị nhiễm trùng đường tiêu hóa, hô hấp trên vịt, gà, ngan, ngỗng', N'profile_pic-ETT-94-ECO_Erycol_10.jpg', N'Còn hàng', 'N2', 'GC');
 INSERT INTO THUOC VALUES ('UV-2', N'ECOLUS', 230000, N'Bột', N'5kg', N'Phân hủy nhanh chất thải, phân tôm, xác tảo và thức ăn dư thừa.', N'profile_pic-UV-2-APA-PLANKTON_FISH.jpg', N'Còn hàng', 'N5', 'TS');
 INSERT INTO THUOC VALUES ('ETT-50', N'Eco – Terra egg', 34500, N'Bột', N'10g', N'Tăng trọng nhanh, giảm tỷ lệ tiêu tốn thức ăn, rút ngắn thời gian nuôi', N'profile_pic-ETT-50-Eco-Terra_egg.jpg', N'Tạm hết hàng', 'N1', 'GC');
+select * from quantri
+
+INSERT INTO QuanTri VALUES ('ThanhTruc', '$2b$10$5ppjIvFVeSDjXyMOEvZ/oe44YmsjohjYgPZcoMlxqCugwvZyJPSZS', 'vtttruc@gmail.com');
+
+select * from KhachHang
