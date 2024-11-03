@@ -110,9 +110,19 @@ const login = async (req, res) => {
         const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.JWT_EXPIRE });
         const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: process.env.REFRESH_TOKEN_EXPIRE });
 
-        res.cookie('refreshToken', refreshToken, );
+        // set refresh token to cookie
+        res.cookie('jwt', refreshToken, {
+            httpOnly: true,
+            sameSite: 'None', secure: true,
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        });
 
-        return res.status(200).json({ accessToken, refreshToken, user: { email: result.recordset[0].Email, tentaikhoan: result.recordset[0].TenTaiKhoan }, message: 'Login success', success: true });
+        return res.status(200).json({
+            accessToken,
+            user: { email: result.recordset[0].Email, tentaikhoan: result.recordset[0].TenTaiKhoan },
+            message: 'Login success',
+            success: true,
+        });
     } catch (err) {
         console.log(err);
         return res.status(500).json({ message: 'Internal Server Error', success: false });
@@ -131,15 +141,9 @@ const getListUser = async (req, res) => {
     }
 }
 
-const authenticationLogin = async (req, res) => {
-
+const reloginwithrefreshtoken = async (req, res) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-
-    console.log(">>> Token:", token);
-
-    if (!token) return res.status(400).json({ message: 'Invalid Token' });
-
     try {
         const decode = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
@@ -147,7 +151,44 @@ const authenticationLogin = async (req, res) => {
         return res.status(200).json({ message: 'Valid Token', data: decode });
     } catch (err) {
         if (err.name === 'TokenExpiredError') {
-            return res.status(400).json({ message: 'Token Expired' });
+            return res.status(400).json({ message: 'Token Expired' });   
+        }
+        return res.status(400).json({ message: 'Invalid Token' });
+    }
+}
+
+const authenticationLogin = async (req, res) => {
+
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const refreshToken = req.cookies.jwt;
+    try {
+        const decode = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+        if (!decode) return res.status(400).json({ message: 'Invalid Token' });
+        return res.status(200).json({ message: 'Valid Token', data: decode });
+    } catch (err) {
+        if (err.name === 'TokenExpiredError') {
+            // return res.status(400).json({ message: 'Token Expired' });
+            if (!refreshToken) return res.status(400).json({ message: 'Invalid Tokenaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' });
+            try {
+                const decode = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+                if (!decode) return res.status(400).json({ message: 'Invalid Token' });
+                const payload = {
+                    email: decode.email,
+                    tentaikhoan: decode.tentaikhoan
+                }
+                const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.JWT_EXPIRE });
+                return res.status(200).json({
+                    accessToken,
+                    data: payload,
+                    message: 'Token Refreshed',
+                    method: 'refresh'
+                });
+            } catch (err) {
+                console.log(err);
+                return res.status(400).json({ message: 'Invalid Token' });
+            }
         }
         return res.status(400).json({ message: 'Invalid Token' });
     }
@@ -164,7 +205,7 @@ const loginAdmin = async (req, res) => {
         if (result.recordset.length === 0) {
             return res.status(404).json({ message: 'Username not found', success: false });
         }
-        
+
         const validPass = await bcrypt.compare(matkhau, result.recordset[0].MatKhau);
 
         if (result.recordset.length === 0 || !validPass) {
@@ -186,9 +227,15 @@ const loginAdmin = async (req, res) => {
     }
 }
 
-const logout = (req, res) => {
+const logout = async (req, res) => {
     req.session.destroy();
-    res.status(200).json({ message: "Logout success" });
+    // clear cookie
+    res.clearCookie('jwt', {
+        httpOnly: true,
+        sameSite: 'None',
+        secure: true
+    });
+    res.sendStatus(204);
 }
 
 module.exports = {
@@ -198,5 +245,6 @@ module.exports = {
     signupAdmin,
     loginAdmin,
     getListUser,
-    authenticationLogin
+    authenticationLogin,
+    reloginwithrefreshtoken
 }
