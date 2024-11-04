@@ -5,6 +5,7 @@ import initApiRoutes from './route/api'
 import initProductRoute from './route/product'
 import initOrdersRoute from './route/order'
 import cookieParser from 'cookie-parser'
+import initAdminRoute from './route/admin'
 
 require('dotenv').config();
 let port = process.env.PORT || 8080;
@@ -33,6 +34,7 @@ app.use(session({
 initApiRoutes(app)
 initProductRoute(app)
 initOrdersRoute(app)
+initAdminRoute(app);
 
 app.listen(port, () => {
     //callback
