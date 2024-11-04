@@ -68,8 +68,8 @@ CREATE TABLE KhachHang (
 );
 
 CREATE TABLE GioHang (
-    MaGioHang VARCHAR(10) NOT NULL,
-    TrangThai NVARCHAR(50),
+    MaGioHang INT IDENTITY NOT NULL,
+    TrangThai BIT,
 	TenTaiKhoan NVARCHAR(255),
     CONSTRAINT PK_GioHang PRIMARY KEY (MaGioHang),
     CONSTRAINT FK_GioHang_KhachHang FOREIGN KEY (TenTaiKhoan) REFERENCES KhachHang(TenTaiKhoan),
@@ -82,13 +82,13 @@ CREATE TABLE HoaDon (
     TrangThaiHD NVARCHAR(50),
 	NgayLap DATE,
     TongTien FLOAT,
-	MaGioHang VARCHAR(10),
+	MaGioHang INT,
 	CONSTRAINT PK_HoaDon PRIMARY KEY (MaDonHang),
     CONSTRAINT FK_HoaDon_GioHang FOREIGN KEY (MaGioHang) REFERENCES GioHang(MaGioHang)
 );
 
 CREATE TABLE ChiTietGioHang (
-    MaGioHang VARCHAR(10) NOT NULL,
+    MaGioHang INT NOT NULL,
 	MaThuoc VARCHAR(20) NOT NULL,
     SoLuong INT,
     ThanhTien FLOAT,
@@ -276,55 +276,55 @@ INSERT INTO DANHMUCHINHANH VALUES ('UV-65', 'pic-UV-65-RODO-UV_2.jpg' );
 INSERT INTO DANHMUCHINHANH VALUES ('UV-65', 'pic-UV-65-RODO-UV_3.jpg' );
 
 
-INSERT INTO QUANTRI VALUES (N'baongoc', N'123456789', N'bpbn@gmail.com' );
-INSERT INTO QUANTRI VALUES (N'nhuquynh', N'21122003', N'npnq@gmail.com' );
+INSERT INTO QUANTRI VALUES (N'baongoc', N'$2b$10$5ppjIvFVeSDjXyMOEvZ/oe44YmsjohjYgPZcoMlxqCugwvZyJPSZS', N'bpbn@gmail.com' );
+INSERT INTO QUANTRI VALUES (N'nhuquynh', N'$2b$10$5ppjIvFVeSDjXyMOEvZ/oe44YmsjohjYgPZcoMlxqCugwvZyJPSZS', N'npnq@gmail.com' );
 
-INSERT INTO KHACHHANG VALUES (N'ductruong', N'cuductruong', N'cdt@gmail.com' );
-INSERT INTO KHACHHANG VALUES (N'thanhtruc', N'vttt', N'vtttruc@gmail.com' );
-INSERT INTO KHACHHANG VALUES (N'baongan', N'baongan', N'npbn@gmail.com' );
+INSERT INTO KHACHHANG VALUES (N'ductruong', N'$2b$10$5ppjIvFVeSDjXyMOEvZ/oe44YmsjohjYgPZcoMlxqCugwvZyJPSZS', N'cdt@gmail.com' );
+INSERT INTO KHACHHANG VALUES (N'thanhtruc', N'$2b$10$5ppjIvFVeSDjXyMOEvZ/oe44YmsjohjYgPZcoMlxqCugwvZyJPSZS', N'vtttruc@gmail.com' );
+INSERT INTO KHACHHANG VALUES (N'baongan', N'$2b$10$5ppjIvFVeSDjXyMOEvZ/oe44YmsjohjYgPZcoMlxqCugwvZyJPSZS', N'npbn@gmail.com' );
 
 
-INSERT INTO GIOHANG VALUES ('GH0001', N'Đã thanh toán', N'ductruong' );
-INSERT INTO GIOHANG VALUES ('GH0002', N'Đã thanh toán', N'thanhtruc' );
-INSERT INTO GIOHANG VALUES ('GH0003', N'Đã thanh toán', N'baongan' );
-INSERT INTO GIOHANG VALUES ('GH0004', N'Đã thanh toán', N'thanhtruc' );
-INSERT INTO GIOHANG VALUES ('GH0005', N'Đã thanh toán', N'ductruong' );
-INSERT INTO GIOHANG VALUES ('GH0006', N'Đã thanh toán', N'baongan' );
-INSERT INTO GIOHANG VALUES ('GH0007', N'Đã thanh toán', N'ductruong' );
-INSERT INTO GIOHANG VALUES ('GH0008', N'Đã thanh toán', N'baongan' );
-INSERT INTO GIOHANG VALUES ('GH0009', N'Đã thanh toán', N'thanhtruc' );
-INSERT INTO GIOHANG VALUES ('GH0010', N'Đã thanh toán', N'baongan' );
+INSERT INTO GIOHANG(TrangThai, TenTaiKhoan) VALUES (1, N'ductruong' );				
+INSERT INTO GIOHANG(TrangThai, TenTaiKhoan) VALUES (1, N'thanhtruc' );				
+INSERT INTO GIOHANG(TrangThai, TenTaiKhoan) VALUES (1, N'baongan' );				
+INSERT INTO GIOHANG(TrangThai, TenTaiKhoan) VALUES (1, N'thanhtruc' );				
+INSERT INTO GIOHANG(TrangThai, TenTaiKhoan) VALUES (1, N'ductruong' );				
+INSERT INTO GIOHANG(TrangThai, TenTaiKhoan) VALUES (1, N'baongan' );				
+INSERT INTO GIOHANG(TrangThai, TenTaiKhoan) VALUES (1, N'ductruong' );				
+INSERT INTO GIOHANG(TrangThai, TenTaiKhoan) VALUES (1, N'baongan' );				
+INSERT INTO GIOHANG(TrangThai, TenTaiKhoan) VALUES (1, N'thanhtruc' );				
+INSERT INTO GIOHANG(TrangThai, TenTaiKhoan) VALUES (1, N'baongan' );				
 
 
 SET DATEFORMAT DMY
-INSERT INTO HOADON VALUES ('DH0001', N'0123632412', N'140 Lê Trọng Tấn, Tây Thạnh, Tân Phú, TP.HCM', N'Đang xử lý', '20/10/2024', 380650, 'GH0001' );
-INSERT INTO HOADON VALUES ('DH0002', N'0125148697', N'46 Đỗ Nhuận, Sơn Kỳ, Tân Phú, TP.HCM', N'Đang xử lý', '21/10/2024', 437000, 'GH0002' );
-INSERT INTO HOADON VALUES ('DH0003', N'0561479456', N'113-97 Đ. Trường Chinh, Tân Thới Nhất, Quận 12, TP.HCM', N'Đang xử lý', '22/10/2024', 230000, 'GH0003' );
-INSERT INTO HOADON VALUES ('DH0004', N'0124758912', N'Phan Huy Ích, Phường 15, Tân Bình, TP.HCM', N'Đang xử lý', '23/10/2024', 495650, 'GH0004' );
-INSERT INTO HOADON VALUES ('DH0005', N'0326548965', N'86-8 Hoàng Bật Đạt, Phường 15, Tân Bình, Hồ Chí Minh, Việt Nam', N'Đang xử lý', '24/10/2024', 195500, 'GH0005' );
-INSERT INTO HOADON VALUES ('DH0006', N'0547894563', N'Hẻm 912/33 Quang Trung, Phường 8, Gò Vấp, Hồ Chí Minh, Việt Nam', N'Đang vận chuyển', '25/10/2024', 230000, 'GH0006' );
-INSERT INTO HOADON VALUES ('DH0007', N'0789413562', N'277-263 Đ. Trường Chinh, Phường 14, Tân Bình, Hồ Chí Minh, Việt Nam', N'Đang vận chuyển', '26/10/2024', 402500, 'GH0007' );
-INSERT INTO HOADON VALUES ('DH0008', N'0914564784', N'19 Đ. Cộng Hòa, Phường 12, Tân Bình, Hồ Chí Minh, Việt Nam', N'Đang vận chuyển', '27/10/2024', 270250, 'GH0008' );
-INSERT INTO HOADON VALUES ('DH0009', N'0917564856', N'681 Đ. Phan Văn Trị, Phường 7, Gò Vấp, Hồ Chí Minh, Việt Nam', N'Đang vận chuyển', '28/10/2024', 310500, 'GH0009' );
-INSERT INTO HOADON VALUES ('DH0010', N'0875641231', N'88/14 Trần Văn Quang, Phường 10, Tân Bình, Hồ Chí Minh, Việt Nam', N'Đang xử lý', '30/10/2024', 575000, 'GH0010' );
+INSERT INTO HOADON VALUES ('DH0001', N'0123632412', N'140 Lê Trọng Tấn, Tây Thạnh, Tân Phú, TP.HCM', N'Đang xử lý', '20/10/2024', 380650, '1' );										
+INSERT INTO HOADON VALUES ('DH0002', N'0125148697', N'46 Đỗ Nhuận, Sơn Kỳ, Tân Phú, TP.HCM', N'Đang xử lý', '21/10/2024', 437000, '2' );										
+INSERT INTO HOADON VALUES ('DH0003', N'0561479456', N'113-97 Đ. Trường Chinh, Tân Thới Nhất, Quận 12, TP.HCM', N'Đang xử lý', '22/10/2024', 230000, '3' );										
+INSERT INTO HOADON VALUES ('DH0004', N'0124758912', N'Phan Huy Ích, Phường 15, Tân Bình, TP.HCM', N'Đang xử lý', '23/10/2024', 495650, '4' );										
+INSERT INTO HOADON VALUES ('DH0005', N'0326548965', N'86-8 Hoàng Bật Đạt, Phường 15, Tân Bình, Hồ Chí Minh, Việt Nam', N'Đang xử lý', '24/10/2024', 195500, '5' );										
+INSERT INTO HOADON VALUES ('DH0006', N'0547894563', N'Hẻm 912/33 Quang Trung, Phường 8, Gò Vấp, Hồ Chí Minh, Việt Nam', N'Đang vận chuyển', '25/10/2024', 230000, '6' );										
+INSERT INTO HOADON VALUES ('DH0007', N'0789413562', N'277-263 Đ. Trường Chinh, Phường 14, Tân Bình, Hồ Chí Minh, Việt Nam', N'Đang vận chuyển', '26/10/2024', 402500, '7' );										
+INSERT INTO HOADON VALUES ('DH0008', N'0914564784', N'19 Đ. Cộng Hòa, Phường 12, Tân Bình, Hồ Chí Minh, Việt Nam', N'Đang vận chuyển', '27/10/2024', 270250, '8' );										
+INSERT INTO HOADON VALUES ('DH0009', N'0917564856', N'681 Đ. Phan Văn Trị, Phường 7, Gò Vấp, Hồ Chí Minh, Việt Nam', N'Đang vận chuyển', '28/10/2024', 310500, '9' );										
+INSERT INTO HOADON VALUES ('DH0010', N'0875641231', N'88/14 Trần Văn Quang, Phường 10, Tân Bình, Hồ Chí Minh, Việt Nam', N'Đang xử lý', '30/10/2024', 575000, '10' );										
 
 
-INSERT INTO CHITIETGIOHANG VALUES ('GH0001', 'HCM-X2-16', 2, 115000);
-INSERT INTO CHITIETGIOHANG VALUES ('GH0001', 'UV-65', 1, 172500);
-INSERT INTO CHITIETGIOHANG VALUES ('GH0001', 'GDA-10', 3, 93150);
-INSERT INTO CHITIETGIOHANG VALUES ('GH0002', 'UV-65', 5, 345000);
-INSERT INTO CHITIETGIOHANG VALUES ('GH0002', 'SAK-185', 2, 92000);
-INSERT INTO CHITIETGIOHANG VALUES ('GH0003', 'BD.TS5-5', 1, 230000);
-INSERT INTO CHITIETGIOHANG VALUES ('GH0004', 'SAK-185', 5, 230000);
-INSERT INTO CHITIETGIOHANG VALUES ('GH0004', 'BN.TS2-15', 3, 117300);
-INSERT INTO CHITIETGIOHANG VALUES ('GH0004', 'SAK-37', 3, 148350);
-INSERT INTO CHITIETGIOHANG VALUES ('GH0005', 'LBF-1', 5, 195500);
-INSERT INTO CHITIETGIOHANG VALUES ('GH0006', 'UV-2', 1, 230000);
-INSERT INTO CHITIETGIOHANG VALUES ('GH0007', 'ETT-94', 1, 402500);
-INSERT INTO CHITIETGIOHANG VALUES ('GH0008', 'ETT-50', 2, 69000);
-INSERT INTO CHITIETGIOHANG VALUES ('GH0008', 'HCM-X4-79', 5, 201250);
-INSERT INTO CHITIETGIOHANG VALUES ('GH0009', 'GDA-10', 10, 310500);
-INSERT INTO CHITIETGIOHANG VALUES ('GH0010', 'ETT-163', 5, 575000);
+INSERT INTO CHITIETGIOHANG VALUES ('1', 'HCM-X2-16', 2, 115000);				
+INSERT INTO CHITIETGIOHANG VALUES ('1', 'UV-65', 1, 172500);				
+INSERT INTO CHITIETGIOHANG VALUES ('1', 'GDA-10', 3, 93150);				
+INSERT INTO CHITIETGIOHANG VALUES ('2', 'UV-65', 5, 345000);				
+INSERT INTO CHITIETGIOHANG VALUES ('2', 'SAK-185', 2, 92000);				
+INSERT INTO CHITIETGIOHANG VALUES ('3', 'BD.TS5-5', 1, 230000);				
+INSERT INTO CHITIETGIOHANG VALUES ('4', 'SAK-185', 5, 230000);				
+INSERT INTO CHITIETGIOHANG VALUES ('4', 'BN.TS2-15', 3, 117300);				
+INSERT INTO CHITIETGIOHANG VALUES ('4', 'SAK-37', 3, 148350);				
+INSERT INTO CHITIETGIOHANG VALUES ('5', 'LBF-1', 5, 195500);				
+INSERT INTO CHITIETGIOHANG VALUES ('6', 'UV-2', 1, 230000);				
+INSERT INTO CHITIETGIOHANG VALUES ('7', 'ETT-94', 1, 402500);				
+INSERT INTO CHITIETGIOHANG VALUES ('8', 'ETT-50', 2, 69000);				
+INSERT INTO CHITIETGIOHANG VALUES ('8', 'HCM-X4-79', 5, 201250);				
+INSERT INTO CHITIETGIOHANG VALUES ('9', 'GDA-10', 10, 310500);				
+INSERT INTO CHITIETGIOHANG VALUES ('10', 'ETT-163', 5, 575000);				
 
 
 INSERT INTO QuanTri VALUES ('ThanhTruc', '$2b$10$5ppjIvFVeSDjXyMOEvZ/oe44YmsjohjYgPZcoMlxqCugwvZyJPSZS', 'vtttruc@gmail.com');
