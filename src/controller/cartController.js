@@ -12,7 +12,7 @@ const getCart = async (req, res) => {
             const maGioHang = result.recordset[0].MaGioHang;
             const cart = await pool.request()
                 .input('uid', maGioHang)
-                .query('SELECT * FROM ChiTietGioHang WHERE MaGioHang = @uid');
+                .query('SELECT c.*, t.TenThuoc, t.DangBaoChe, t.QCDongGoi, t.GiaBan, t.AnhDaiDien FROM ChiTietGioHang c join Thuoc t ON c.MaThuoc = t.MaThuoc WHERE MaGioHang = @uid');
             return res.status(200).send(cart.recordset);
         } else {
             console.log('cart not found');
