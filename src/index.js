@@ -3,6 +3,7 @@ import session from 'express-session'
 var cors = require('cors')
 import initApiRoutes from './route/api'
 import initProductRoute from './route/product'
+import initOrdersRoute from './route/order'
 import cookieParser from 'cookie-parser'
 import initAdminRoute from './route/admin'
 import initCartRoute from './route/cart'
@@ -33,6 +34,7 @@ app.use(session({
 
 initApiRoutes(app)
 initProductRoute(app)
+initOrdersRoute(app)
 initAdminRoute(app);
 initCartRoute(app);
 
