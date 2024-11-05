@@ -4,8 +4,8 @@ import productController from "../controller/productController";
 const router = express.Router();
 
 const initProductRoute = (app) => {
-    router.get('/getProducts', productController.getProducts);
-    router.get('/getProductById', productController.getProductById);
+    router.get('/getproducts', productController.getProducts);
+    router.get('/getProductById/:id', productController.getProductById);
     router.get('/getproductsbyname', productController.getProductsByName);
     router.get('/getproductssortedbyprice', productController.getProductsSortedByPrice);
     router.get('/getproductsfilterdbyprice', productController.getProductsFilteredByPrice);

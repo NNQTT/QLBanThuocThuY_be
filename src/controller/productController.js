@@ -19,10 +19,10 @@ const getProducts = async (req, res) => {
 
 const getProductById = async (req, res) => {
     try {
-        const { id } = req.query;
+        const { id } = req.params;
         const pool = await connectDB();
 
-        console.log(id);
+        console.log("product id: ", id);
         const result = await pool.request()
             .input('id', sql.VarChar, id)
             .query('SELECT * FROM Thuoc WHERE MaThuoc = @id');
