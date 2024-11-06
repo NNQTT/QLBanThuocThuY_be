@@ -6,11 +6,23 @@ import sql from "mssql";
 const getProducts = async (req, res) => {
     try {
         const pool = await connectDB();
+        let pagesize = req.query.pagesize || 12;
+        let page = req.query.page || 1;
+        const offset = (page - 1) * pagesize;
 
         const result = await pool.request()
-            .query('SELECT * FROM Thuoc');
+            .query(`SELECT * FROM Thuoc 
+                    ORDER BY MaThuoc 
+                    OFFSET ${offset} ROWS 
+                    FETCH NEXT ${pagesize} ROWS ONLY`)
 
-        return res.status(200).send(result.recordset);
+        const totalResult = await pool.request().query('SELECT COUNT(*) AS totalProducts FROM Thuoc');
+        const totalProducts = totalResult.recordset[0].totalProducts;
+
+        //return res.status(200).send(result.recordset);
+        return res.status(200).json({
+            products: result.recordset,
+            totalProducts: totalProducts,});
     } catch (err) {
         console.log(err);
         return res.status(500).send('Internal Server Error');
