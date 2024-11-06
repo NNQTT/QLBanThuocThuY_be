@@ -50,6 +50,25 @@ const getProductById = async (req, res) => {
     }
 }
 
+const getProductRelated = async (req, res) => {
+    try {
+        const {maloai, manhomthuoc} = req.query;
+        const pool = await connectDB();
+        console.log('MaLoai: ', maloai);
+        const result = await pool.request()
+            .input('MaLoai', sql.VarChar, maloai)
+            .input('MaNhomThuoc', sql.VarChar, manhomthuoc)
+            .query('SELECT * FROM Thuoc WHERE MaLoai = @MaLoai or MaNhomThuoc = @MaNhomThuoc');
+
+        return res.status(200).json({data: result.recordset});
+        
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send('Internal Server Error');
+        
+    }
+}
+
 const getProductsByName = async (req, res) =>{
     let {query} = req.query;
     console.log('query: ', query);
@@ -120,5 +139,6 @@ module.exports = {
     getProductById,
     getProductsByName,
     getProductsSortedByPrice,
-    getProductsFilteredByPrice
+    getProductsFilteredByPrice,
+    getProductRelated
 }

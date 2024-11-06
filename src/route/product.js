@@ -5,10 +5,11 @@ const router = express.Router();
 
 const initProductRoute = (app) => {
     router.get('/getproducts', productController.getProducts);
-    router.get('/getProductById/:id', productController.getProductById);
+    router.get('/getproductbyid/:id', productController.getProductById);
     router.get('/getproductsbyname', productController.getProductsByName);
     router.get('/getproductssortedbyprice', productController.getProductsSortedByPrice);
     router.get('/getproductsfilterdbyprice', productController.getProductsFilteredByPrice);
+    router.get('/getproductrelated', productController.getProductRelated);
     return app.use('/product', router);
 }
 
