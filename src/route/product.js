@@ -10,6 +10,9 @@ const initProductRoute = (app) => {
     router.get('/getproductssortedbyprice', productController.getProductsSortedByPrice);
     router.get('/getproductsfilterdbyprice', productController.getProductsFilteredByPrice);
     router.get('/getproductrelated', productController.getProductRelated);
+    router.get('/getproductbylocalstorage', productController.getProductByLocalStorage);
+    router.get('/getalbumproduct', productController.getAlbumProducts);
+
     return app.use('/product', router);
 }
 

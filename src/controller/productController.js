@@ -22,7 +22,8 @@ const getProducts = async (req, res) => {
         //return res.status(200).send(result.recordset);
         return res.status(200).json({
             products: result.recordset,
-            totalProducts: totalProducts,});
+            totalProducts: totalProducts,
+        });
     } catch (err) {
         console.log(err);
         return res.status(500).send('Internal Server Error');
@@ -34,7 +35,6 @@ const getProductById = async (req, res) => {
         const { id } = req.params;
         const pool = await connectDB();
 
-        console.log("product id: ", id);
         const result = await pool.request()
             .input('id', sql.VarChar, id)
             .query('SELECT * FROM Thuoc WHERE MaThuoc = @id');
@@ -52,28 +52,73 @@ const getProductById = async (req, res) => {
 
 const getProductRelated = async (req, res) => {
     try {
-        const {maloai, manhomthuoc} = req.query;
+        const { maloai, manhomthuoc } = req.query;
         const pool = await connectDB();
-        console.log('MaLoai: ', maloai);
         const result = await pool.request()
             .input('MaLoai', sql.VarChar, maloai)
             .input('MaNhomThuoc', sql.VarChar, manhomthuoc)
             .query('SELECT * FROM Thuoc WHERE MaLoai = @MaLoai or MaNhomThuoc = @MaNhomThuoc');
 
-        return res.status(200).json({data: result.recordset});
-        
+        return res.status(200).json({ data: result.recordset });
+
     } catch (error) {
         console.log(error);
         return res.status(500).send('Internal Server Error');
-        
+
     }
 }
 
-const getProductsByName = async (req, res) =>{
-    let {query} = req.query;
+const getProductByLocalStorage = async (req, res) => {
+    try {
+        const { listproduct } = req.query;
+        let listProductArray;
+        try {
+            listProductArray = JSON.parse(listproduct);
+        } catch (error) {
+            return res.status(400).send('Invalid JSON format for listproduct');
+        }
+        if (!Array.isArray(listProductArray)) {
+            return res.status(400).send('List product is not array');
+        }
+        const pool = await connectDB();
+        let result = [];
+        for (let i = 0; i < listProductArray.length; i++) {
+            let product = await pool.request()
+                .input('MaThuoc', sql.VarChar, listProductArray[i])
+                .query('SELECT * FROM Thuoc WHERE MaThuoc = @MaThuoc');
+            result.push(product.recordset[0]);
+        }
+        return res.status(200).json({ data: result });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send('Internal Server Error');
+
+    }
+}
+
+const getAlbumProducts = async (req, res) => {
+    try {
+        const { mathuoc } = req.query;
+        const pool = await connectDB();
+        const result = await pool.request()
+            .input('MaThuoc', sql.VarChar, mathuoc)
+            .query('SELECT * FROM DanhMucHinhAnh WHERE MaThuoc = @MaThuoc');
+
+            console.log(result);
+        return res.status(200).json({ data: result.recordset });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send('Internal Server Error');
+    }
+}
+
+const getProductsByName = async (req, res) => {
+    let { query } = req.query;
     console.log('query: ', query);
-    if(!query){
-        return res.status(400).json({message: 'Please enter name or use'});
+    if (!query) {
+        return res.status(400).json({ message: 'Please enter name or use' });
     }
     try {
         let pool = await connectDB();
@@ -88,50 +133,50 @@ const getProductsByName = async (req, res) =>{
     }
 }
 
-const getProductsSortedByPrice = async (req, res) =>{
+const getProductsSortedByPrice = async (req, res) => {
     try {
-        let {giaBan} = req.query;
+        let { giaBan } = req.query;
         let pool = await connectDB();
         let result;
-        if(giaBan == -1){
+        if (giaBan == -1) {
             result = await pool.request().query('SELECT * FROM Thuoc ORDER BY GiaBan DESC');
         }
-        else{
+        else {
             result = await pool.request().query('SELECT * FROM Thuoc ORDER BY GiaBan ASC');
         }
         res.status(200).json(result.recordset);
     } catch (error) {
         console.log(error);
-        return res.status(500).json({message: 'Internal Server Error'})
+        return res.status(500).json({ message: 'Internal Server Error' })
     }
 }
 
-const getProductsFilteredByPrice = async (req, res) =>{
+const getProductsFilteredByPrice = async (req, res) => {
     try {
-        let {giaBan} = req.query;
+        let { giaBan } = req.query;
         console.log('giá bán: ', giaBan);
         let pool = await connectDB();
         let result;
-        if(giaBan < 20000){
+        if (giaBan < 20000) {
             result = await pool.request().query('SELECT * FROM Thuoc WHERE GiaBan < 20000');
         }
-        else if(giaBan >= 20000 && giaBan < 50000){
+        else if (giaBan >= 20000 && giaBan < 50000) {
             result = await pool.request().query('SELECT * FROM Thuoc WHERE GiaBan >= 20000 AND GiaBan < 50000');
         }
-        else if(giaBan >= 50000 && giaBan < 100000){
+        else if (giaBan >= 50000 && giaBan < 100000) {
             result = await pool.request().query('SELECT * FROM Thuoc WHERE GiaBan >= 50000 AND GiaBan < 1000000');
         }
-        else if(giaBan >= 100000 && giaBan < 200000){
+        else if (giaBan >= 100000 && giaBan < 200000) {
             result = await pool.request().query('SELECT * FROM Thuoc WHERE GiaBan >= 100000 AND GiaBan < 2000000');
         }
-        else{
+        else {
             result = await pool.request().query('SELECT * FROM Thuoc WHERE GiaBan > 200000');
         }
         console.log(result);
         res.status(200).json(result.recordset);
     } catch (error) {
         console.log(error);
-        return res.status(500).json({message: 'Internal Server Error'})
+        return res.status(500).json({ message: 'Internal Server Error' })
     }
 }
 module.exports = {
@@ -140,5 +185,7 @@ module.exports = {
     getProductsByName,
     getProductsSortedByPrice,
     getProductsFilteredByPrice,
-    getProductRelated
+    getProductRelated,
+    getProductByLocalStorage,
+    getAlbumProducts
 }
