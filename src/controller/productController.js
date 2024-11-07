@@ -115,16 +115,34 @@ const getAlbumProducts = async (req, res) => {
 }
 
 const getProductsByName = async (req, res) => {
-    let { query } = req.query;
-    console.log('query: ', query);
-    if (!query) {
+    let { searchTerm  } = req.query;
+    console.log('query: ', req.query);
+    console.log('name: ', searchTerm);
+    if (!searchTerm) {
         return res.status(400).json({ message: 'Please enter name or use' });
     }
     try {
         let pool = await connectDB();
         let result = await pool.request()
-            .input('query', sql.NVarChar, `%${query}%`)
+            .input('query', sql.NVarChar, `%${searchTerm }%`)
             .query('SELECT * FROM Thuoc WHERE TenThuoc LIKE @query OR CongDung LIKE @query');
+        console.log(result);
+        res.status(200).json(result.recordset)
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send("Internal Server Error");
+    }
+}
+
+const getProductsByGroup = async (req, res) => {
+    let { groupName  } = req.query;
+    console.log('query: ', req.query);
+    console.log('name: ', groupName);
+    try {
+        let pool = await connectDB();
+        let result = await pool.request()
+            .input('groupName', sql.VarChar, groupName)
+            .query('SELECT * FROM Thuoc WHERE MaNhomThuoc = @groupName');
         console.log(result);
         res.status(200).json(result.recordset)
     } catch (error) {
@@ -187,5 +205,6 @@ module.exports = {
     getProductsFilteredByPrice,
     getProductRelated,
     getProductByLocalStorage,
-    getAlbumProducts
+    getAlbumProducts,
+    getProductsByGroup
 }

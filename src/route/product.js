@@ -12,6 +12,7 @@ const initProductRoute = (app) => {
     router.get('/getproductrelated', productController.getProductRelated);
     router.get('/getproductbylocalstorage', productController.getProductByLocalStorage);
     router.get('/getalbumproduct', productController.getAlbumProducts);
+    router.get('/getproductsbygroup', productController.getProductsByGroup);
 
     return app.use('/product', router);
 }
