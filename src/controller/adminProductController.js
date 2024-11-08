@@ -64,6 +64,47 @@ const getThuoc = async (req, res) => {
     }
 };
 
+const addDanhMucAnh = async (req, res) => {
+    const { maThuoc, tenHinhAnh } = req.body;
+    try {
+        if (!maThuoc || !tenHinhAnh) {
+            return res.status(400).json({ message: 'Mã thuốc và tên hình ảnh là bắt buộc' });
+        }
+
+        const pool = await connectDB();
+        await pool.request()
+            .input('maThuoc', sql.VarChar, maThuoc)
+            .input('tenHinhAnh', sql.NVarChar, tenHinhAnh)
+            .query('INSERT INTO DanhMucHinhAnh (MaThuoc, TenHinhAnh) VALUES (@maThuoc, @tenHinhAnh)');
+        
+        return res.status(201).json({ message: 'Thêm hình ảnh thành công' });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Lỗi khi thêm hình ảnh' });
+    }
+};
+
+const addThuocThanhPhan = async (req, res) => {
+    const { maThuoc, maTP } = req.body;
+    try {
+        if (!maThuoc || !maTP) {
+            return res.status(400).json({ message: 'Mã thuốc và mã thành phần là bắt buộc' });
+        }
+
+        const pool = await connectDB();
+        await pool.request()
+            .input('maThuoc', sql.VarChar, maThuoc)
+            .input('maTP', sql.Int, maTP)
+            .query('INSERT INTO ThuocThanhPhan (MaThuoc, MaTP) VALUES (@maThuoc, @maTP)');
+        
+        return res.status(201).json({ message: 'Thêm thành phần cho thuốc thành công' });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Lỗi khi thêm thành phần cho thuốc' });
+    }
+};
+
+
 const addThuoc = async (req, res) => {
     const { maThuoc, tenThuoc, giaBan, soLuong, dangBaoChe, qCDongGoi, congDung, anhDaiDien, trangThai, maNhomThuoc, maLoai } = req.body;
     try {
@@ -121,5 +162,7 @@ export default {
     addThanhPhan,
     getThuoc,
     addThuoc,
-    updateThuoc
+    updateThuoc,
+    addThuocThanhPhan,
+    addDanhMucAnh
 };
