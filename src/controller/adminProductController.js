@@ -42,11 +42,13 @@ const addThanhPhan = async (req, res) => {
         }
 
         const pool = await connectDB();
-        await pool.request()
+        const thuoc = await pool.request()
             .input('tenThanhPhan', sql.NVarChar, tenThanhPhan)
-            .query('INSERT INTO ThanhPhan (TenThanhPhan) VALUES (@tenThanhPhan)');
-        
-        return res.status(201).json({ message: 'Thêm thành phần thành công' });
+            .query('INSERT INTO ThanhPhan (TenThanhPhan) VALUES (@tenThanhPhan); SELECT * FROM ThanhPhan WHERE MATP = SCOPE_IDENTITY()');
+        console.log(thuoc)
+
+        return res.status(201).json({ message: 'Thêm thành phần thành công' , thuoc: thuoc.recordset[0] });
+
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Lỗi khi thêm thành phần' });
@@ -72,12 +74,11 @@ const addDanhMucAnh = async (req, res) => {
         }
 
         const pool = await connectDB();
-        await pool.request()
+        const danhmuc = await pool.request()
             .input('maThuoc', sql.VarChar, maThuoc)
             .input('tenHinhAnh', sql.NVarChar, tenHinhAnh)
             .query('INSERT INTO DanhMucHinhAnh (MaThuoc, TenHinhAnh) VALUES (@maThuoc, @tenHinhAnh)');
-        
-        return res.status(201).json({ message: 'Thêm hình ảnh thành công' });
+        return res.status(201).json({ message: 'Thêm hình ảnh thành công' , danhmuc: danhmuc.recordset});
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Lỗi khi thêm hình ảnh' });
@@ -106,7 +107,8 @@ const addThuocThanhPhan = async (req, res) => {
 
 
 const addThuoc = async (req, res) => {
-    const { maThuoc, tenThuoc, giaBan, soLuong, dangBaoChe, qCDongGoi, congDung, anhDaiDien, trangThai, maNhomThuoc, maLoai } = req.body;
+    const { maThuoc, tenThuoc, giaBan, soLuong, dangBaoChe, qcDongGoi, congDung, anhDaiDien, trangThai, maNhomThuoc, maLoai } = req.body;
+    console.log(req.body)
     try {
         const pool = await connectDB();
         await pool.request()
@@ -115,7 +117,7 @@ const addThuoc = async (req, res) => {
             .input('giaBan', sql.Float, giaBan)
             .input('soLuong', sql.Int, soLuong)
             .input('dangBaoChe', sql.NVarChar, dangBaoChe)
-            .input('qCDongGoi', sql.NVarChar, qCDongGoi)
+            .input('qcDongGoi', sql.NVarChar, qcDongGoi)
             .input('congDung', sql.NVarChar, congDung)
             .input('anhDaiDien', sql.NVarChar, anhDaiDien)
             .input('trangThai', sql.NVarChar, trangThai)
