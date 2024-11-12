@@ -19,9 +19,10 @@ const getCart = async (req, res) => {
             //create new cart
             await pool.request()
                 .input('uid', sql.VarChar, uid)
-                .query('INSERT INTO GioHang(TrangThai, TenTaiKhoan) VALUES (0, @uid)');
+                .query('INSERT INTO GioHang(TrangThai, TenTaiKhoan) VALUES (0, @uid); SELECT SCOPE_IDENTITY() AS MaGioHang');
+            const maGioHang = result.recordset[0].MaGioHang;
             const cart = await pool.request()
-                .input('uid', sql.VarChar, uid)
+                .input('uid', sql.Int, maGioHang)
                 .query('SELECT * FROM ChiTietGioHang WHERE MaGioHang = @uid');
             return res.status(200).send(cart.recordset);
         }
@@ -180,9 +181,47 @@ const updateProductInCart = async (req, res) => {
     }
 }
 
+const checkout = async (req, res) => {
+    //post method
+    const name = req.body.name;
+    const phone = req.body.phone;
+    const address = req.body.address;
+    const email = req.body.email;
+    const total = req.body.total;
+    let cartid = req.body.cartid;
+
+    try{
+        const pool = await connectDB();
+        if (cartid === undefined || cartid === null || cartid === '') {
+            const newCart = await pool.request().query('INSERT INTO GioHang(TrangThai) VALUES (1); SELECT SCOPE_IDENTITY() AS MaGioHang');
+            cartid = newCart.recordset[0].MaGioHang;
+        }
+        else await pool.request().input('cartid', sql.Int, cartid).query('UPDATE GioHang SET TrangThai = 1 WHERE MaGioHang = @cartid');
+        const result = await pool.request()
+            .input('name', sql.NVarChar, name)
+            .input('phone', sql.NVarChar, phone)
+            .input('address', sql.NVarChar, address)
+            .input('email', sql.NVarChar, email)
+            .input('total', sql.Float, total)
+            .input('cartid', sql.Int, cartid)
+            .input('status', sql.NVarChar, 'Chưa xác nhận')
+            .query('INSERT INTO HoaDon(DienThoai, DiaChi, TrangThaiHD, NgayLap, TongTien, MaGioHang) VALUES (@phone, @address, @status, GETDATE(), @total, @cartid); SELECT SCOPE_IDENTITY() AS MaDonHang');
+        console.log(result.recordset);
+        return res.status(200).json({ message: 'Checkout successfully', success: true, mahd: result.recordset[0].MaDonHang });
+    }
+    catch(err){
+        console.log(err);
+        return res.status(500).json({
+            message: 'Internal Server Error',
+            success: false
+        });
+    }
+} 
+
 module.exports = {
     getCart,
     addProductToCart,
     removeProductFromCart,
-    updateProductInCart
+    updateProductInCart,
+    checkout
 }
