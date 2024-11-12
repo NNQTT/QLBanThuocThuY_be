@@ -8,6 +8,8 @@ const initCartRoute = (app) => {
     router.post('/:uid/:pid/', cartController.addProductToCart);
     router.delete('/:uid/:pid', cartController.removeProductFromCart);
     router.patch('/:uid/:pid', cartController.updateProductInCart);
+
+    router.post('/checkout', cartController.checkout);
     return app.use('/cart', router);
 }
 
