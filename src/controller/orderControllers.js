@@ -41,8 +41,40 @@ const getOrderDetails = async (req, res) => {
     }
 };
 
+const updateOrder = async (req, res) => {
+    const maDonHang = req.params.maDonHang;
+    const { DienThoai, DiaChi, TrangThaiHD } = req.body;
+
+    try {
+        const pool = await connectDB();
+        
+        const result = await pool.request()
+            .input('MaDonHang', maDonHang)
+            .input('DienThoai', DienThoai)
+            .input('DiaChi', DiaChi)
+            .input('TrangThaiHD', TrangThaiHD)
+            .query(`
+                UPDATE HoaDon
+                SET DienThoai = @DienThoai,
+                    DiaChi = @DiaChi,
+                    TrangThaiHD = @TrangThaiHD
+                WHERE MaDonHang = @MaDonHang
+            `);
+
+        if (result.rowsAffected[0] === 0) {
+            return res.status(404).send('Order not found');
+        }
+
+        return res.status(200).send('Order updated successfully');
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send('Internal Server Error');
+    }
+};
+
 
 module.exports = {
     getOrders,
-    getOrderDetails
+    getOrderDetails,
+    updateOrder
 }
