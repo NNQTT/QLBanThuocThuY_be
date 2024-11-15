@@ -188,6 +188,7 @@ const checkout = async (req, res) => {
     const address = req.body.address;
     const email = req.body.email;
     const total = req.body.total;
+    const products = req.body.products;
     let cartid = req.body.cartid;
 
     try{
@@ -195,6 +196,17 @@ const checkout = async (req, res) => {
         if (cartid === undefined || cartid === null || cartid === '') {
             const newCart = await pool.request().query('INSERT INTO GioHang(TrangThai) VALUES (1); SELECT SCOPE_IDENTITY() AS MaGioHang');
             cartid = newCart.recordset[0].MaGioHang;
+            console.log('product', products);
+            if (products.length > 0) {
+                for (let i = 0; i < products.length; i++) {
+                    await pool.request()
+                        .input('cartid', sql.Int, cartid)
+                        .input('productid', sql.VarChar, products[i].MaThuoc)
+                        .input('quantity', sql.Int, products[i].SoLuong)
+                        .input('total', sql.Float, products[i].ThanhTien)
+                        .query('INSERT INTO CHITIETGIOHANG(MaGioHang, MaThuoc, SoLuong, ThanhTien) VALUES (@cartid, @productid, @quantity, @total)');
+                }
+            }
         }
         else await pool.request().input('cartid', sql.Int, cartid).query('UPDATE GioHang SET TrangThai = 1 WHERE MaGioHang = @cartid');
         const result = await pool.request()
