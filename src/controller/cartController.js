@@ -17,10 +17,10 @@ const getCart = async (req, res) => {
         } else {
             console.log('cart not found');
             //create new cart
-            await pool.request()
+            const magh = await pool.request()
                 .input('uid', sql.VarChar, uid)
                 .query('INSERT INTO GioHang(TrangThai, TenTaiKhoan) VALUES (0, @uid); SELECT SCOPE_IDENTITY() AS MaGioHang');
-            const maGioHang = result.recordset[0].MaGioHang;
+            const maGioHang = magh.recordset[0].MaGioHang;
             const cart = await pool.request()
                 .input('uid', sql.Int, maGioHang)
                 .query('SELECT * FROM ChiTietGioHang WHERE MaGioHang = @uid');
@@ -50,10 +50,39 @@ const addProductToCart = async (req, res) => {
                 success: false
             });
         }
-        const totalPrice = product.recordset[0].GiaBan * quantity;
+
+        // Kiểm tra số lượng tồn kho
+        const availableQuantity = product.recordset[0].SoLuong;
+        
+        // Kiểm tra số lượng trong giỏ hàng hiện tại
         const cart = await pool.request()
             .input('uid', sql.VarChar, uid)
             .query('SELECT * FROM GioHang WHERE TenTaiKhoan = @uid AND TrangThai = 0');
+            
+        let currentQuantityInCart = 0;
+        if (cart.recordset.length > 0) {
+            const maGioHang = cart.recordset[0].MaGioHang;
+            const checkProduct = await pool.request()
+                .input('uid', maGioHang)
+                .input('productId', sql.VarChar, productId)
+                .query('SELECT SoLuong FROM ChiTietGioHang WHERE MaGioHang = @uid AND MaThuoc = @productId');
+            
+            if (checkProduct.recordset.length > 0) {
+                currentQuantityInCart = checkProduct.recordset[0].SoLuong;
+            }
+        }
+
+        // Kiểm tra tổng số lượng
+        if (currentQuantityInCart + quantity > availableQuantity) {
+            return res.json({
+                message: 'Tổng số lượng thuốc vượt quá số lượng trong kho',
+                success: false,
+                availableQuantity: availableQuantity,
+                currentInCart: currentQuantityInCart
+            });
+        }
+
+        const totalPrice = product.recordset[0].GiaBan * quantity;
         if (cart.recordset.length > 0) {
             const maGioHang = cart.recordset[0].MaGioHang;
             const checkProduct = await pool.request()
@@ -182,7 +211,6 @@ const updateProductInCart = async (req, res) => {
 }
 
 const checkout = async (req, res) => {
-    //post method
     const name = req.body.name;
     const phone = req.body.phone;
     const address = req.body.address;
@@ -190,25 +218,84 @@ const checkout = async (req, res) => {
     const total = req.body.total;
     const products = req.body.products;
     let cartid = req.body.cartid;
-
-    try{
+    try {
         const pool = await connectDB();
-        if (cartid === undefined || cartid === null || cartid === '') {
-            const newCart = await pool.request().query('INSERT INTO GioHang(TrangThai) VALUES (1); SELECT SCOPE_IDENTITY() AS MaGioHang');
-            cartid = newCart.recordset[0].MaGioHang;
-            console.log('product', products);
-            if (products.length > 0) {
-                for (let i = 0; i < products.length; i++) {
-                    await pool.request()
-                        .input('cartid', sql.Int, cartid)
-                        .input('productid', sql.VarChar, products[i].MaThuoc)
-                        .input('quantity', sql.Int, products[i].SoLuong)
-                        .input('total', sql.Float, products[i].ThanhTien)
-                        .query('INSERT INTO CHITIETGIOHANG(MaGioHang, MaThuoc, SoLuong, ThanhTien) VALUES (@cartid, @productid, @quantity, @total)');
+        
+        if (!(cartid === undefined || cartid === null || cartid === '')) {
+            console.log('cartid', cartid);
+            // Người dùng đã đăng nhập, lấy thông tin giỏ hàng từ database
+            const cartItems = await pool.request()
+                .input('cartid', sql.Int, cartid)
+                .query(`
+                    SELECT ct.MaThuoc, ct.SoLuong, t.SoLuong as TonKho 
+                    FROM ChiTietGioHang ct
+                    JOIN Thuoc t ON ct.MaThuoc = t.MaThuoc
+                    WHERE ct.MaGioHang = @cartid
+                `);
+
+            // Kiểm tra số lượng tồn kho
+            for (const item of cartItems.recordset) {
+                if (item.TonKho < item.SoLuong) {
+                    return res.status(400).json({
+                        message: `Sản phẩm ${item.MaThuoc} không đủ số lượng trong kho`,
+                        success: false,
+                        availableQuantity: item.TonKho,
+                        requestedQuantity: item.SoLuong
+                    });
                 }
             }
+
+            // Cập nhật trạng thái giỏ hàng và số lượng tồn kho
+            await pool.request()
+                .input('cartid', sql.Int, cartid)
+                .query('UPDATE GioHang SET TrangThai = 1 WHERE MaGioHang = @cartid');
+
+            // Cập nhật số lượng tồn kho
+            for (const item of cartItems.recordset) {
+                await pool.request()
+                    .input('productid', sql.VarChar, item.MaThuoc)
+                    .input('quantity', sql.Int, item.SoLuong)
+                    .query('UPDATE Thuoc SET SoLuong = SoLuong - @quantity WHERE MaThuoc = @productid');
+            }
+        } else {
+            // Người dùng chưa đăng nhập, kiểm tra số lượng từ mảng products
+            for (let i = 0; i < products.length; i++) {
+                const product = await pool.request()
+                    .input('productId', sql.VarChar, products[i].MaThuoc)
+                    .query('SELECT SoLuong FROM Thuoc WHERE MaThuoc = @productId');
+                
+                if (product.recordset[0].SoLuong < products[i].SoLuong) {
+                    return res.status(400).json({
+                        message: `Sản phẩm ${products[i].MaThuoc} không đủ số lượng trong kho`,
+                        success: false,
+                        availableQuantity: product.recordset[0].SoLuong,
+                        requestedQuantity: products[i].SoLuong
+                    });
+                }
+            }
+
+            // Tạo giỏ hàng mới
+            const newCart = await pool.request()
+                .query('INSERT INTO GioHang(TrangThai) VALUES (1); SELECT SCOPE_IDENTITY() AS MaGioHang');
+            cartid = newCart.recordset[0].MaGioHang;
+
+            // Thêm chi tiết giỏ hàng và cập nhật số lượng tồn kho
+            for (let i = 0; i < products.length; i++) {
+                await pool.request()
+                    .input('cartid', sql.Int, cartid)
+                    .input('productid', sql.VarChar, products[i].MaThuoc)
+                    .input('quantity', sql.Int, products[i].SoLuong)
+                    .input('total', sql.Float, products[i].ThanhTien)
+                    .query('INSERT INTO CHITIETGIOHANG(MaGioHang, MaThuoc, SoLuong, ThanhTien) VALUES (@cartid, @productid, @quantity, @total)');
+                
+                await pool.request()
+                    .input('productid', sql.VarChar, products[i].MaThuoc)
+                    .input('quantity', sql.Int, products[i].SoLuong)
+                    .query('UPDATE Thuoc SET SoLuong = SoLuong - @quantity WHERE MaThuoc = @productid');
+            }
         }
-        else await pool.request().input('cartid', sql.Int, cartid).query('UPDATE GioHang SET TrangThai = 1 WHERE MaGioHang = @cartid');
+
+        // Tạo hóa đơn
         const result = await pool.request()
             .input('name', sql.NVarChar, name)
             .input('phone', sql.NVarChar, phone)
@@ -216,19 +303,22 @@ const checkout = async (req, res) => {
             .input('email', sql.NVarChar, email)
             .input('total', sql.Float, total)
             .input('cartid', sql.Int, cartid)
-            .input('status', sql.NVarChar, 'Chưa xác nhận')
+            .input('status', sql.NVarChar, 'Đang xử lý')
             .query('INSERT INTO HoaDon(DienThoai, DiaChi, TrangThaiHD, NgayLap, TongTien, MaGioHang) VALUES (@phone, @address, @status, GETDATE(), @total, @cartid); SELECT SCOPE_IDENTITY() AS MaDonHang');
-        console.log(result.recordset);
-        return res.status(200).json({ message: 'Checkout successfully', success: true, mahd: result.recordset[0].MaDonHang });
-    }
-    catch(err){
+
+        return res.status(200).json({ 
+            message: 'Checkout successfully', 
+            success: true, 
+            mahd: result.recordset[0].MaDonHang 
+        });
+    } catch(err) {
         console.log(err);
         return res.status(500).json({
             message: 'Internal Server Error',
             success: false
         });
     }
-} 
+}
 
 module.exports = {
     getCart,
