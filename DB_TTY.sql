@@ -143,7 +143,7 @@ INSERT INTO THUOC VALUES ('BD.TS5-19', N'MD Protect', 230000, 36, N'Dung dịch'
 INSERT INTO THUOC VALUES ('BN.TS2-51', N'ECO-OMICD FISH', 115000, 90, N'Dung dịch', N'500 ml', N'Sát trùng nguồn nước nuôi trồng thủy sản', N'profile_pic-BN.TS2-51-Iodin-200.jpg', N'Còn hàng', 'N4', 'TS');
 INSERT INTO THUOC VALUES ('BN.TS2-15', N'ECO-DOXYFISH POWER 20%', 39100, 63, N'Bột', N'500g', N'Trị bệnh đỏ thân trên tôm do vi khuẩn Vibrio alginolyticus', N'profile_pic-BN.TS2-15-ECO-Doxyfish_Power_20.png', N'Còn hàng', 'N2', 'TS');
 INSERT INTO THUOC VALUES ('SAK-37', N'Flormax', 49450, 68, N'Bột', N'100g', N'Trị nhiễm trùng đường tiêu hóa, hô hấp trên heo, trâu, bò, dê, cừu.', N'profile_pic-SAK-37-Flormax.jpg', N'Còn hàng', 'N2', 'GS');
-INSERT INTO THUOC VALUES ('CME-3', N'Vắc xin PRRS nhược độc chủng JXA1-R', 65550, 29, N'Dung dịch tiêm', N'50ml', N'Phòng hội chứng rối loạn hô hấp và sinh sản (PRRS) trên heo.', N'profile_pic-CME-3-Vắc_xin_PRRS_JXA1-R.jpg', N'Còn hàng', 'N3', 'GS');
+INSERT INTO THUOC VALUES ('CME-3', N'Vắc xin PRRS nhược độc chủng JXA1-R', 65550, 29, N'Dung dịch tiêm', N'50ml', N'Phòng hội chứng rối loạn hô hấp và sinh sản (PRRS) trên heo.', N'profile_pic-CME-3-Vac_xin_PRRS_JXA1-R.jpg', N'Còn hàng', 'N3', 'GS');
 INSERT INTO THUOC VALUES ('LBF-1', N'Foot And Mouth Disease Vaccine', 39100, 78, N'Dung dịch tiêm', N'100ml', N'Phòng bệnh Lở mồm long móng trên lợn', N'profile_pic-LBF-1-Foot_And_Mouth_Disease_Vaccine.jpg', N'Còn hàng', 'N3', 'GS');
 INSERT INTO THUOC VALUES ('ETT-94', N'ECO ERYCOL 10', 402500, 36, N'Viên nén', N'10kg', N'Trị nhiễm trùng đường tiêu hóa, hô hấp trên vịt, gà, ngan, ngỗng', N'profile_pic-ETT-94-ECO_Erycol_10.jpg', N'Còn hàng', 'N2', 'GC');
 INSERT INTO THUOC VALUES ('UV-2', N'ECOLUS', 230000, 63, N'Bột', N'5kg', N'Phân hủy nhanh chất thải, phân tôm, xác tảo và thức ăn dư thừa.', N'profile_pic-UV-2-APA-PLANKTON_FISH.jpg', N'Còn hàng', 'N5', 'TS');
@@ -275,8 +275,8 @@ INSERT INTO DANHMUCHINHANH VALUES ('BN.TS2-15', 'pic-BN.TS2-15-ECO-Doxyfish_Powe
 INSERT INTO DANHMUCHINHANH VALUES ('BN.TS2-51', 'pic-BN.TS2-51-Iodin-200.jpg' );
 INSERT INTO DANHMUCHINHANH VALUES ('BN.TS2-51', 'pic-BN.TS2-51-Iodin-200_1.jpg' );
 INSERT INTO DANHMUCHINHANH VALUES ('BN.TS2-51', 'pic-BN.TS2-51-Iodin-200_2.jpg' );
-INSERT INTO DANHMUCHINHANH VALUES ('CME-3', 'pic-CME-3-Vắc_xin_PRRS_JXA1-R_3.jpg' );
-INSERT INTO DANHMUCHINHANH VALUES ('CME-3', 'pic-CME-3-Vắc_xin_PRRS_JXA1-R_2.jpg' );
+INSERT INTO DANHMUCHINHANH VALUES ('CME-3', 'pic-CME-3-Vac_xin_PRRS_JXA1-R_3.jpg' );
+INSERT INTO DANHMUCHINHANH VALUES ('CME-3', 'pic-CME-3-Vac_xin_PRRS_JXA1-R_2.jpg' );
 INSERT INTO DANHMUCHINHANH VALUES ('ETT-163', 'pic-ETT-163-Dental_Creme_2.jpg' );
 INSERT INTO DANHMUCHINHANH VALUES ('ETT-163', 'pic-ETT-163-Dental_Creme.jpg' );
 INSERT INTO DANHMUCHINHANH VALUES ('ETT-165', 'pic-ETT-165-Progesterone.jpg' );

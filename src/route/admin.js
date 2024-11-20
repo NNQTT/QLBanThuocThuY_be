@@ -13,9 +13,10 @@ const initAdminRoute = (app) => {
     adminRouter.post('/postthuoc', adminProductController.addThuoc);
     adminRouter.post('/postthuoctp', adminProductController.addThuocThanhPhan);
     adminRouter.post('/postdanhmucha', adminProductController.addDanhMucAnh);
-    adminRouter.put('/updatethuoc', adminProductController.updateThuoc);
+    adminRouter.put('/updatethuoc/:maThuoc', adminProductController.updateThuoc);
     adminRouter.put('/updatedanhmucha', adminProductController.updateDanhMucAnh);
     adminRouter.put('/updatethuoctp', adminProductController.updateThuocThanhPhan);
+    adminRouter.delete('/deletedanhmucha/:maThuoc/:tenHinhAnh', adminProductController.deleteDanhMucAnh);
     
     return app.use('/admin', adminRouter);
 };
