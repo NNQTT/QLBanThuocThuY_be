@@ -85,6 +85,8 @@ const addDanhMucAnh = async (req, res) => {
     }
 };
 
+
+
 const addThuocThanhPhan = async (req, res) => {
     const { maThuoc, maTP } = req.body;
     try {
@@ -157,6 +159,152 @@ const updateThuoc = async (req, res) => {
     }
 };
 
+
+const updateDanhMucAnh = async (req, res) => {
+    const { maDanhMucAnh, maThuoc, tenHinhAnh } = req.body;
+    try {
+        if (!maDanhMucAnh || !maThuoc || !tenHinhAnh) {
+            return res.status(400).json({ message: 'Mã danh mục ảnh, mã thuốc và tên hình ảnh là bắt buộc' });
+        }
+
+        const pool = await connectDB();
+        const result = await pool.request()
+            .input('maDanhMucAnh', sql.Int, maDanhMucAnh)
+            .input('maThuoc', sql.VarChar, maThuoc)
+            .input('tenHinhAnh', sql.NVarChar, tenHinhAnh)
+            .query(`
+                UPDATE DanhMucHinhAnh
+                SET MaThuoc = @maThuoc, TenHinhAnh = @tenHinhAnh
+                WHERE MaDanhMucAnh = @maDanhMucAnh
+            `);
+
+        if (result.rowsAffected[0] === 0) {
+            return res.status(404).json({ message: 'Không tìm thấy danh mục ảnh để cập nhật' });
+        }
+
+        return res.status(200).json({ message: 'Cập nhật danh mục ảnh thành công' });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Lỗi khi cập nhật danh mục ảnh' });
+    }
+};
+
+
+const updateThuocThanhPhan = async (req, res) => {
+    const { id, maThuoc, maTP } = req.body;
+    try {
+        if (!id || !maThuoc || !maTP) {
+            return res.status(400).json({ message: 'ID, mã thuốc và mã thành phần là bắt buộc' });
+        }
+
+        const pool = await connectDB();
+        const result = await pool.request()
+            .input('id', sql.Int, id)
+            .input('maThuoc', sql.VarChar, maThuoc)
+            .input('maTP', sql.Int, maTP)
+            .query(`
+                UPDATE ThuocThanhPhan
+                SET MaThuoc = @maThuoc, MaTP = @maTP
+                WHERE ID = @id
+            `);
+
+        if (result.rowsAffected[0] === 0) {
+            return res.status(404).json({ message: 'Không tìm thấy thành phần của thuốc để cập nhật' });
+        }
+
+        return res.status(200).json({ message: 'Cập nhật thành phần của thuốc thành công' });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Lỗi khi cập nhật thành phần của thuốc' });
+    }
+};
+
+const getThuocById = async (req, res) => {
+    const { maThuoc } = req.params;
+    
+    try {
+        const pool = await connectDB();
+        
+        const result = await pool.request()
+            .input('maThuoc', sql.VarChar, maThuoc)
+            .query(`
+                SELECT 
+                    t.MaThuoc,
+                    t.TenThuoc,
+                    t.GiaBan,
+                    t.SoLuong,
+                    t.DangBaoChe,
+                    t.QCDongGoi,
+                    t.CongDung,
+                    t.AnhDaiDien,
+                    t.TrangThai,
+                    t.MaNhomThuoc,
+                    t.MaLoai,
+                    ttp.MaTP,
+                    tp.TenThanhPhan,
+                    dma.TenHinhAnh,
+                    ls.TenLoai,
+                    nt.TenNhom
+                FROM Thuoc t
+                LEFT JOIN ThuocThanhPhan ttp ON t.MaThuoc = ttp.MaThuoc
+                LEFT JOIN ThanhPhan tp ON ttp.MaTP = tp.MaTP
+                LEFT JOIN DanhMucHinhAnh dma ON t.MaThuoc = dma.MaThuoc
+                LEFT JOIN LoaiSuDung ls ON t.MaLoai = ls.MaLoai
+                LEFT JOIN NhomThuoc nt ON t.MaNhomThuoc = nt.MaNhomThuoc
+                WHERE t.MaThuoc = @maThuoc
+            `);
+
+        if (result.recordset.length === 0) {
+            return res.status(404).json({ 
+                message: 'Không tìm thấy thuốc',
+                maThuocNhan: maThuoc 
+            });
+        }
+
+        // Xử lý dữ liệu trả về
+        const thuoc = {
+            MaThuoc: result.recordset[0].MaThuoc,
+            TenThuoc: result.recordset[0].TenThuoc,
+            GiaBan: result.recordset[0].GiaBan,
+            SoLuong: result.recordset[0].SoLuong,
+            DangBaoChe: result.recordset[0].DangBaoChe,
+            QCDongGoi: result.recordset[0].QCDongGoi,
+            CongDung: result.recordset[0].CongDung,
+            AnhDaiDien: result.recordset[0].AnhDaiDien,
+            TrangThai: result.recordset[0].TrangThai,
+            MaNhomThuoc: result.recordset[0].MaNhomThuoc,
+            MaLoai: result.recordset[0].MaLoai,
+            TenLoai: result.recordset[0].TenLoai,
+            TenNhom: result.recordset[0].TenNhom,
+            
+            // Gom nhóm thành phần
+            thanhPhan: result.recordset
+                .filter(record => record.MaTP)
+                .map(record => ({
+                    maTP: record.MaTP,
+                    tenThanhPhan: record.TenThanhPhan
+                })),
+
+            // Gom nhóm hình ảnh
+            danhMucHinhAnh: result.recordset
+                .filter(record => record.TenHinhAnh)
+                .map(record => ({
+                    tenHinhAnh: record.TenHinhAnh
+                }))
+        };
+
+        console.log("Dữ liệu trả về:", thuoc);
+        return res.status(200).json(thuoc);
+        
+    } catch (error) {
+        console.error("Lỗi chi tiết:", error);
+        return res.status(500).json({ 
+            message: 'Lỗi khi lấy thông tin thuốc',
+            error: error.message 
+        });
+    }
+};
+
 export default {
     getLoaiSuDung,
     getNhomThuoc,
@@ -166,5 +314,8 @@ export default {
     addThuoc,
     updateThuoc,
     addThuocThanhPhan,
-    addDanhMucAnh
+    addDanhMucAnh,
+    updateDanhMucAnh,
+    updateThuocThanhPhan,
+    getThuocById
 };
