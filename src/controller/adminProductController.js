@@ -147,70 +147,68 @@ const updateThuoc = async (req, res) => {
             AnhDaiDien,
             TrangThai,
             MaNhomThuoc,
-            MaLoai 
+            MaLoai,
+            TenTaiKhoan
         } = req.body;
-
-        console.log("Mã thuốc:", maThuoc);
-        console.log("Dữ liệu nhận được:", req.body);
-
-        // Kiểm tra dữ liệu đầu vào
-        if (!maThuoc) {
-            return res.status(400).json({ message: 'Thiếu mã thuốc' });
-        }
 
         const pool = await connectDB();
         
-        // Kiểm tra thuốc tồn tại
-        const checkExist = await pool.request()
-            .input('maThuoc', sql.VarChar, maThuoc)
-            .query('SELECT COUNT(*) as count FROM Thuoc WHERE MaThuoc = @maThuoc');
-
-        if (checkExist.recordset[0].count === 0) {
-            return res.status(404).json({ message: 'Không tìm thấy thuốc' });
-        }
-
-        // Thực hiện update
-        const result = await pool.request()
-            .input('maThuoc', sql.VarChar, maThuoc)
-            .input('tenThuoc', sql.NVarChar, TenThuoc)
-            .input('giaBan', sql.Float, GiaBan)
-            .input('soLuong', sql.Int, SoLuong)
-            .input('dangBaoChe', sql.NVarChar, DangBaoChe)
-            .input('qcDongGoi', sql.NVarChar, QCDongGoi)
-            .input('congDung', sql.NVarChar, CongDung)
-            .input('anhDaiDien', sql.NVarChar, AnhDaiDien)
-            .input('trangThai', sql.NVarChar, TrangThai)
-            .input('maNhomThuoc', sql.VarChar, MaNhomThuoc)
-            .input('maLoai', sql.VarChar, MaLoai)
-            .query(`
-                UPDATE Thuoc 
-                SET 
-                    TenThuoc = @tenThuoc,
-                    GiaBan = @giaBan,
-                    SoLuong = @soLuong,
-                    DangBaoChe = @dangBaoChe,
-                    QCDongGoi = @qcDongGoi,
-                    CongDung = @congDung,
-                    AnhDaiDien = @anhDaiDien,
-                    TrangThai = @trangThai,
-                    MaNhomThuoc = @maNhomThuoc,
-                    MaLoai = @maLoai
-                WHERE MaThuoc = @maThuoc;
-                
-                SELECT @@ROWCOUNT as count;
-            `);
-
-        console.log("Kết quả update:", result);
-
-        if (result.recordset[0].count === 0) {
-            return res.status(500).json({ message: 'Cập nhật không thành công' });
-        }
+        // Bắt đầu transaction
+        const transaction = new sql.Transaction(pool);
         
-        return res.status(200).json({ 
-            message: 'Cập nhật thuốc thành công',
-            maThuoc: maThuoc,
-            updatedData: req.body
-        });
+        try {
+            await transaction.begin();
+
+            // 1. Cập nhật thông tin thuốc
+            await transaction.request()
+                .input('maThuoc', sql.VarChar, maThuoc)
+                .input('tenThuoc', sql.NVarChar, TenThuoc)
+                .input('giaBan', sql.Float, GiaBan)
+                .input('soLuong', sql.Int, SoLuong)
+                .input('dangBaoChe', sql.NVarChar, DangBaoChe)
+                .input('qcDongGoi', sql.NVarChar, QCDongGoi)
+                .input('congDung', sql.NVarChar, CongDung)
+                .input('anhDaiDien', sql.NVarChar, AnhDaiDien)
+                .input('trangThai', sql.NVarChar, TrangThai)
+                .input('maNhomThuoc', sql.VarChar, MaNhomThuoc)
+                .input('maLoai', sql.VarChar, MaLoai)
+                .query(`
+                    UPDATE Thuoc 
+                    SET 
+                        TenThuoc = @tenThuoc,
+                        GiaBan = @giaBan,
+                        SoLuong = @soLuong,
+                        DangBaoChe = @dangBaoChe,
+                        QCDongGoi = @qcDongGoi,
+                        CongDung = @congDung,
+                        AnhDaiDien = @anhDaiDien,
+                        TrangThai = @trangThai,
+                        MaNhomThuoc = @maNhomThuoc,
+                        MaLoai = @maLoai
+                    WHERE MaThuoc = @maThuoc
+                `);
+
+            // 2. Thêm vào bảng LichSuThuoc
+            await transaction.request()
+                .input('maThuoc', sql.VarChar, maThuoc)
+                .input('tenTaiKhoan', sql.NVarChar, TenTaiKhoan)
+                .input('ngayCapNhat', sql.DateTime, new Date())
+                .query(`
+                    INSERT INTO LichSuThuoc (NgayCapNhat, MaThuoc, TenTaiKhoan)
+                    VALUES (@ngayCapNhat, @maThuoc, @tenTaiKhoan)
+                `);
+
+            await transaction.commit();
+            
+            return res.status(200).json({ 
+                message: 'Cập nhật thuốc thành công',
+                maThuoc: maThuoc
+            });
+
+        } catch (error) {
+            await transaction.rollback();
+            throw error;
+        }
     } catch (error) {
         console.error('Lỗi cập nhật:', error);
         return res.status(500).json({ 
@@ -406,6 +404,56 @@ const deleteDanhMucAnh = async (req, res) => {
     }
 };
 
+const getLichSuThuoc = async (req, res) => {
+    try {
+        const pool = await connectDB();
+        const result = await pool.request().query(`
+            SELECT 
+                lst.MaThemSuaThuoc, 
+                lst.NgayCapNhat, 
+                lst.MaThuoc,
+                lst.TenTaiKhoan,
+                t.TenThuoc,
+                qt.TenTaiKhoan as NguoiCapNhat
+            FROM LichSuThuoc lst
+            JOIN Thuoc t ON lst.MaThuoc = t.MaThuoc
+            JOIN QuanTri qt ON lst.TenTaiKhoan = qt.TenTaiKhoan
+            ORDER BY lst.NgayCapNhat DESC
+        `);
+        return res.status(200).json(result.recordset);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Lỗi khi tải lịch sử thuốc" });
+    }
+};
+
+const getLichSuThuocById = async (req, res) => {
+    const { maThuoc } = req.params;
+    try {
+        const pool = await connectDB();
+        const result = await pool.request()
+            .input('maThuoc', sql.VarChar, maThuoc)
+            .query(`
+                SELECT 
+                    lst.MaThemSuaThuoc, 
+                    lst.NgayCapNhat, 
+                    lst.MaThuoc,
+                    lst.TenTaiKhoan,
+                    t.TenThuoc,
+                    qt.TenTaiKhoan as NguoiCapNhat
+                FROM LichSuThuoc lst
+                JOIN Thuoc t ON lst.MaThuoc = t.MaThuoc
+                JOIN QuanTri qt ON lst.TenTaiKhoan = qt.TenTaiKhoan
+                WHERE lst.MaThuoc = @maThuoc
+                ORDER BY lst.NgayCapNhat DESC
+            `);
+        return res.status(200).json(result.recordset);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Lỗi khi tải lịch sử thuốc" });
+    }
+};
+
 export default {
     getLoaiSuDung,
     getNhomThuoc,
@@ -419,5 +467,7 @@ export default {
     updateDanhMucAnh,
     updateThuocThanhPhan,
     getThuocById,
-    deleteDanhMucAnh
+    deleteDanhMucAnh,
+    getLichSuThuoc,
+    getLichSuThuocById
 };
