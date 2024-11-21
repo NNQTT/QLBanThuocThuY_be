@@ -208,24 +208,44 @@ const loginAdmin = async (req, res) => {
 
         const validPass = await bcrypt.compare(matkhau, result.recordset[0].MatKhau);
 
-        if (result.recordset.length === 0 || !validPass) {
-            return res.status(404).json({ message: 'Email or password invalid!', success: false });
+        if (!validPass) {
+            return res.status(404).json({ message: 'Password invalid!', success: false });
         }
-        // create an access token
+
         const payload = {
             email: result.recordset[0].Email,
             tentaikhoan: result.recordset[0].TenTaiKhoan
         }
+        
         const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.JWT_EXPIRE });
         const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: process.env.REFRESH_TOKEN_EXPIRE });
 
-        return res.status(200).json({ accessToken, refreshToken, user: { email: result.recordset[0].Email, tentaikhoan: result.recordset[0].TenTaiKhoan }, message: 'Login success', success: true });
+        // Log để debug
+        console.log('Login response:', {
+            accessToken,
+            refreshToken,
+            user: {
+                email: result.recordset[0].Email,
+                tentaikhoan: result.recordset[0].TenTaiKhoan
+            }
+        });
 
-    } catch (err) {
-        console.log(err);
-        return res.status(500).json({ message: 'Internal Server Error', success: false });
+        return res.status(200).json({ 
+            accessToken, 
+            refreshToken, 
+            user: {
+                email: result.recordset[0].Email,
+                tentaikhoan: result.recordset[0].TenTaiKhoan
+            },
+            message: 'Login success',
+            success: true 
+        });
+
+    } catch (error) {
+        console.error('Login error:', error);
+        return res.status(500).json({ message: 'Internal server error', success: false });
     }
-}
+};
 
 const logout = async (req, res) => {
     req.session.destroy();
@@ -238,6 +258,28 @@ const logout = async (req, res) => {
     res.sendStatus(204);
 }
 
+const getCurrentUser = async (req, res) => {
+    try {
+        // Lấy token từ header
+        const token = req.headers.authorization?.split(' ')[1];
+        if (!token) {
+            return res.status(401).json({ message: 'No token provided' });
+        }
+
+        // Verify token
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        
+        // Trả về thông tin user
+        return res.status(200).json({
+            tentaikhoan: decoded.tentaikhoan,
+            email: decoded.email
+        });
+    } catch (error) {
+        console.error('Get current user error:', error);
+        return res.status(401).json({ message: 'Invalid token' });
+    }
+};
+
 module.exports = {
     signup,
     login,
@@ -246,5 +288,6 @@ module.exports = {
     loginAdmin,
     getListUser,
     authenticationLogin,
-    reloginwithrefreshtoken
+    reloginwithrefreshtoken,
+    getCurrentUser
 }

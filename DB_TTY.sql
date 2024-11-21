@@ -143,21 +143,21 @@ INSERT INTO Thuoc VALUES ('BD.TS5-19', N'MD Protect', 230000, 36, N'Dung dịch'
 INSERT INTO Thuoc VALUES ('BN.TS2-51', N'ECO-OMICD FISH', 115000, 90, N'Dung dịch', N'500 ml', N'Sát trùng nguồn nước nuôi trồng thủy sản', N'profile_pic-BN.TS2-51-Iodin-200.jpg', N'Còn hàng', 'N4', 'TS');
 INSERT INTO Thuoc VALUES ('BN.TS2-15', N'ECO-DOXYFISH POWER 20%', 39100, 63, N'Bột', N'500g', N'Trị bệnh đỏ thân trên tôm do vi khuẩn Vibrio alginolyticus', N'profile_pic-BN.TS2-15-ECO-Doxyfish_Power_20.png', N'Còn hàng', 'N2', 'TS');
 INSERT INTO Thuoc VALUES ('SAK-37', N'Flormax', 49450, 68, N'Bột', N'100g', N'Trị nhiễm trùng đường tiêu hóa, hô hấp trên heo, trâu, bò, dê, cừu.', N'profile_pic-SAK-37-Flormax.jpg', N'Còn hàng', 'N2', 'GS');
-INSERT INTO Thuoc VALUES ('CME-3', N'Vắc xin PRRS nhược độc chủng JXA1-R', 65550, 29, N'Dung dịch tiêm', N'50ml', N'Phòng hội chứng rối loạn hô hấp và sinh sản (PRRS) trên heo.', N'profile_pic-CME-3-Vắc_xin_PRRS_JXA1-R.jpg', N'Còn hàng', 'N3', 'GS');
+INSERT INTO Thuoc VALUES ('CME-3', N'Vắc xin PRRS nhược độc chủng JXA1-R', 65550, 29, N'Dung dịch tiêm', N'50ml', N'Phòng hội chứng rối loạn hô hấp và sinh sản (PRRS) trên heo.', N'profile_pic-CME-3-Vac_xin_PRRS_JXA1-R.jpg', N'Còn hàng', 'N3', 'GS');
 INSERT INTO Thuoc VALUES ('LBF-1', N'Foot And Mouth Disease Vaccine', 39100, 78, N'Dung dịch tiêm', N'100ml', N'Phòng bệnh Lở mồm long móng trên lợn', N'profile_pic-LBF-1-Foot_And_Mouth_Disease_Vaccine.jpg', N'Còn hàng', 'N3', 'GS');
 INSERT INTO Thuoc VALUES ('ETT-94', N'ECO ERYCOL 10', 402500, 36, N'Viên nén', N'10kg', N'Trị nhiễm trùng đường tiêu hóa, hô hấp trên vịt, gà, ngan, ngỗng', N'profile_pic-ETT-94-ECO_Erycol_10.jpg', N'Còn hàng', 'N2', 'GC');
 INSERT INTO Thuoc VALUES ('UV-2', N'ECOLUS', 230000, 63, N'Bột', N'5kg', N'Phân hủy nhanh chất thải, phân tôm, xác tảo và thức ăn dư thừa.', N'profile_pic-UV-2-APA-PLANKTON_FISH.jpg', N'Còn hàng', 'N5', 'TS');
 INSERT INTO Thuoc VALUES ('ETT-50', N'Eco – Terra egg', 34500, 56, N'Bột', N'10g', N'Tăng trọng nhanh, giảm tỷ lệ tiêu tốn thức ăn, rút ngắn thời gian nuôi', N'profile_pic-ETT-50-Eco-Terra_egg.jpg', N'Tạm hết hàng', 'N1', 'GC');
-INSERT INTO Thuoc VALUES ('GOV-275', N'Iron Cox', 100000, 42, N'Hỗn dịch tiêm', N'100ml', N'Điều trị và phòng ngừa thiếu máu do thiếu sắt, do ký sinh trùng, cầu trùng, …trên gia súc, lợn', N'profile_pic-GOV-275-Iron_Cox.jpg', N'Còn hàng', 'N2', 'GS');
-INSERT INTO Thuoc VALUES ('GOV-27', N'G-AMOX-LANIC', 198000, 9, N'Hỗn dịch tiêm', N'100ml', N'Trị các bệnh đường tiêu hóa: Viêm ruột ỉa chảy phân trắng, phân vàng, phân xanh do E.coli, Salmonella, phó thương hàn, thương hàn. Trị viêm vú, viêm tử cung, mất sữa (Hội chứng M.M.A), nhiễm khuẩn da, mô mềm, áp xe, móng khớp, viêm đường tiết niệu.', N'profile_pic-GOV-27-G_AMOX_LANIC.jpg', N'Còn hàng', 'N2', 'GS');
-INSERT INTO Thuoc VALUES ('GOV-11', N'AMOX – COLIS', 398000, 38, N'Bột', N'1kg', N'Phòng và trị bệnh viêm phổi địa phương trên heo (SEP), tụ huyết trùng, viêm ruột tiêu chảy do E.Coli.', N'profile_pic-GOV-11-AMOX – COLIS.jpg', N'Còn hàng', 'N2', 'GS');
-INSERT INTO Thuoc VALUES ('GOV-32', N'NẤM PHỔI, NẤM DIỀU CAO CẤP', 648000, 18, N'Bột', N'1kg', N'Đặc trị nhiễm trùng huyết, hen CRD ghép nấm phổi, hen ghép nấm diều, hen ghép nấm ruột', N'profile_pic-GOV-32.lpg', N'Còn hàng', 'N2', 'GS');
-INSERT INTO Thuoc VALUES ('GOV-74', N'FLUMEQUIN', 125000, 20, N'Bột', N'100g', N'Đặc trị E.coli, thương hàn, tụ huyết trùng, các dạng ỉa chảy nặng, chướng diều, khô chân, sốt cao bỏ ăn, thương hàn, tụ huyết trùng.', N'profile_pic-GOV-74-FLUMEQUIN.jpg', N'Còn hàng', 'N2', 'GC');
-INSERT INTO Thuoc VALUES ('GOV-55', N'TIAMULIN-PREMIX 200', 255000, 57, N'Bột', N'100g', N'Đặc trị suyễn lợn, hen gà, hen ghép E.coli, CRD, khẹc vịt, viêm phổi màng phổi, viêm teo mũi truyền nhiễm, sưng phù đầu, tụ huyết trùng, thương hàn, viêm khớp,lỵ, tiêu chảy,…', N'profile_pic-GOV-55-TIAMULIN_PREMIX_200.jpg', N'Còn hàng', 'N2', 'GS');
-INSERT INTO Thuoc VALUES ('GOV-50', N'FLOR S40', 418000, 96, N'Bột', N'1kg', N'Đặc trị viêm phổi, suyễn lợn, tụ huyết trùng, viêm teo mũi truyền nhiễm, tiêu chảy, hồng lỵ, phó thương hàn, liên cầu lợn, các bệnh kế phát của bệnh tai xanh (PRRS).', N'profile_pic-GOV-50-FLOR_S40.jpg', N'Còn hàng', 'N2', 'GS');
-INSERT INTO Thuoc VALUES ('GOV-89', N'FLOR S40', 716000, 76, N'Dung dịch uống', N'1 lít', N'Đặc trị hen khẹc, hen ghép tiêu chảy, sưng phù đầu, viêm xoang mũi, tụ huyết trùng, E.coli, thương hàn, tiêu chảy phân xanh, phân trắng, phân nhớt vàng…', N'profile_pic-GOV-89-ENRO_20.jpg', N'Còn hàng', 'N2', 'GC');
-INSERT INTO Thuoc VALUES ('GOV-13', N'AMOXIN', 9600, 67, N'Hỗn dịch tiêm', N'100ml', N'Đặc trị các bệnh nhiễm trùng đường tiêu hoá và hô hấp của gia cầm, viêm ruột tiêu chảy, viêm phổi, sưng phù đầu, tụ huyết trùng, viêm tử cung, viêm vú, viêm móng, thương hàn, nhiễm trùng vết thương.', N'profile_pic-GOV-13-AMOXIN,jpg', N'Còn hàng', 'N2', 'GC');
-INSERT INTO Thuoc VALUES ('GOV-28', N'CEF ONE', 345000, 74, N'Hỗn dịch tiêm', N'100ml', N'Đặc trị viêm phế quản, viêm phổi, viêm phổi dính sườn, tụ liên cầu, hội chứng hô hấp sau PRRS, tiêu chảy gây ra bởi E.coli, Salmonella, các bệnh viêm vú, viêm khớp, viêm tử cung, viêm móng, viêm da, tụ huyết trùng.', N'profile_pic-GOV-28-CEF_ONE.jpg', N'Còn hàng', 'N2', 'GS');
+INSERT INTO Thuoc VALUES ('GOV-275', N'Iron Cox', 100000, N'Hỗn dịch tiêm', N'100ml', N'Điều trị và phòng ngừa thiếu máu do thiếu sắt, do ký sinh trùng, cầu trùng, …trên gia súc, lợn', N'profile_pic-GOV-275-Iron_Cox.jpg', N'Còn hàng', 'N2', 'GS');
+INSERT INTO Thuoc VALUES ('GOV-27', N'G-AMOX-LANIC', 198000, N'Hỗn dịch tiêm', N'100ml', N'Trị các bệnh đường tiêu hóa: Viêm ruột ỉa chảy phân trắng, phân vàng, phân xanh do E.coli, Salmonella, phó thương hàn, thương hàn. Trị viêm vú, viêm tử cung, mất sữa (Hội chứng M.M.A), nhiễm khuẩn da, mô mềm, áp xe, móng khớp, viêm đường tiết niệu.', N'profile_pic-GOV-27-G_AMOX_LANIC.jpg', N'Còn hàng', 'N2', 'GS');
+INSERT INTO Thuoc VALUES ('GOV-11', N'AMOX – COLIS', 398000, N'Bột', N'1kg', N'Phòng và trị bệnh viêm phổi địa phương trên heo (SEP), tụ huyết trùng, viêm ruột tiêu chảy do E.Coli.', N'profile_pic-GOV-11-AMOX – COLIS.jpg', N'Còn hàng', 'N2', 'GS');
+INSERT INTO Thuoc VALUES ('GOV-32', N'NẤM PHỔI, NẤM DIỀU CAO CẤP', 648000, N'Bột', N'1kg', N'Đặc trị nhiễm trùng huyết, hen CRD ghép nấm phổi, hen ghép nấm diều, hen ghép nấm ruột', N'profile_pic-GOV-32.lpg', N'Còn hàng', 'N2', 'GS');
+INSERT INTO Thuoc VALUES ('GOV-74', N'FLUMEQUIN', 125000, N'Bột', N'100g', N'Đặc trị E.coli, thương hàn, tụ huyết trùng, các dạng ỉa chảy nặng, chướng diều, khô chân, sốt cao bỏ ăn, thương hàn, tụ huyết trùng.', N'profile_pic-GOV-74-FLUMEQUIN.jpg', N'Còn hàng', 'N2', 'GC');
+INSERT INTO Thuoc VALUES ('GOV-55', N'TIAMULIN-PREMIX 200', 255000, N'Bột', N'100g', N'Đặc trị suyễn lợn, hen gà, hen ghép E.coli, CRD, khẹc vịt, viêm phổi màng phổi, viêm teo mũi truyền nhiễm, sưng phù đầu, tụ huyết trùng, thương hàn, viêm khớp,lỵ, tiêu chảy,…', N'profile_pic-GOV-55-TIAMULIN_PREMIX_200.jpg', N'Còn hàng', 'N2', 'GS');
+INSERT INTO Thuoc VALUES ('GOV-50', N'FLOR S40', 418000, N'Bột', N'1kg', N'Đặc trị viêm phổi, suyễn lợn, tụ huyết trùng, viêm teo mũi truyền nhiễm, tiêu chảy, hồng lỵ, phó thương hàn, liên cầu lợn, các bệnh kế phát của bệnh tai xanh (PRRS).', N'profile_pic-GOV-50-FLOR_S40.jpg', N'Còn hàng', 'N2', 'GS');
+INSERT INTO Thuoc VALUES ('GOV-89', N'FLOR S40', 716000, N'Dung dịch uống', N'1 lít', N'Đặc trị hen khẹc, hen ghép tiêu chảy, sưng phù đầu, viêm xoang mũi, tụ huyết trùng, E.coli, thương hàn, tiêu chảy phân xanh, phân trắng, phân nhớt vàng…', N'profile_pic-GOV-89-ENRO_20.jpg', N'Còn hàng', 'N2', 'GC');
+INSERT INTO Thuoc VALUES ('GOV-13', N'AMOXIN', 9600, N'Hỗn dịch tiêm', N'100ml', N'Đặc trị các bệnh nhiễm trùng đường tiêu hoá và hô hấp của gia cầm, viêm ruột tiêu chảy, viêm phổi, sưng phù đầu, tụ huyết trùng, viêm tử cung, viêm vú, viêm móng, thương hàn, nhiễm trùng vết thương.', N'profile_pic-GOV-13-AMOXIN,jpg', N'Còn hàng', 'N2', 'GC');
+INSERT INTO Thuoc VALUES ('GOV-28', N'CEF ONE', 345000, N'Hỗn dịch tiêm', N'100ml', N'Đặc trị viêm phế quản, viêm phổi, viêm phổi dính sườn, tụ liên cầu, hội chứng hô hấp sau PRRS, tiêu chảy gây ra bởi E.coli, Salmonella, các bệnh viêm vú, viêm khớp, viêm tử cung, viêm móng, viêm da, tụ huyết trùng.', N'profile_pic-GOV-28-CEF_ONE.jpg', N'Còn hàng', 'N2', 'GS');
 
 INSERT INTO ThanhPhan VALUES ( N'Oxytetracyclin');
 INSERT INTO ThanhPhan VALUES ( N'Vitamin A');
@@ -275,8 +275,8 @@ INSERT INTO DanhMucHinhAnh VALUES ('BN.TS2-15', 'pic-BN.TS2-15-ECO-Doxyfish_Powe
 INSERT INTO DanhMucHinhAnh VALUES ('BN.TS2-51', 'pic-BN.TS2-51-Iodin-200.jpg' );
 INSERT INTO DanhMucHinhAnh VALUES ('BN.TS2-51', 'pic-BN.TS2-51-Iodin-200_1.jpg' );
 INSERT INTO DanhMucHinhAnh VALUES ('BN.TS2-51', 'pic-BN.TS2-51-Iodin-200_2.jpg' );
-INSERT INTO DanhMucHinhAnh VALUES ('CME-3', 'pic-CME-3-Vắc_xin_PRRS_JXA1-R_3.jpg' );
-INSERT INTO DanhMucHinhAnh VALUES ('CME-3', 'pic-CME-3-Vắc_xin_PRRS_JXA1-R_2.jpg' );
+INSERT INTO DanhMucHinhAnh VALUES ('CME-3', 'pic-CME-3-Vac_xin_PRRS_JXA1-R_3.jpg' );
+INSERT INTO DanhMucHinhAnh VALUES ('CME-3', 'pic-CME-3-Vac_xin_PRRS_JXA1-R_2.jpg' );
 INSERT INTO DanhMucHinhAnh VALUES ('ETT-163', 'pic-ETT-163-Dental_Creme_2.jpg' );
 INSERT INTO DanhMucHinhAnh VALUES ('ETT-163', 'pic-ETT-163-Dental_Creme.jpg' );
 INSERT INTO DanhMucHinhAnh VALUES ('ETT-165', 'pic-ETT-165-Progesterone.jpg' );
@@ -316,7 +316,8 @@ INSERT INTO DanhMucHinhAnh VALUES ('GOV-50', 'pic-GOV-50-FLOR_S40.jpg' );
 INSERT INTO DanhMucHinhAnh VALUES ('GOV-89', 'pic-GOV-89-ENRO_20.jpg' );
 INSERT INTO DanhMucHinhAnh VALUES ('GOV-13', 'pic-GOV-13-AMOXIN.jpg' );
 INSERT INTO DanhMucHinhAnh VALUES ('GOV-28', 'pic-GOV-23-CEF_ONE.jpg' );
-select * from DanhMucHinhAnh
+
+
 
 INSERT INTO QUANTRI VALUES (N'baongoc', N'$2b$10$5ppjIvFVeSDjXyMOEvZ/oe44YmsjohjYgPZcoMlxqCugwvZyJPSZS', N'bpbn@gmail.com' );
 INSERT INTO QUANTRI VALUES (N'nhuquynh', N'$2b$10$5ppjIvFVeSDjXyMOEvZ/oe44YmsjohjYgPZcoMlxqCugwvZyJPSZS', N'npnq@gmail.com' );
