@@ -118,6 +118,9 @@ const getProductsByName = async (req, res) => {
     let { searchTerm  } = req.query;
     console.log('query: ', req.query);
     console.log('name: ', searchTerm);
+    let pagesize = req.query.pagesize || 12;
+        let page = req.query.page || 1;
+        const offset = (page - 1) * pagesize;
     if (!searchTerm) {
         return res.status(400).json({ message: 'Please enter name or use' });
     }
@@ -125,9 +128,18 @@ const getProductsByName = async (req, res) => {
         let pool = await connectDB();
         let result = await pool.request()
             .input('query', sql.NVarChar, `%${searchTerm }%`)
-            .query('SELECT * FROM Thuoc WHERE TenThuoc LIKE @query OR CongDung LIKE @query');
-        console.log(result);
-        res.status(200).json(result.recordset)
+            .query(`SELECT * FROM Thuoc WHERE TenThuoc LIKE @query OR CongDung LIKE @query
+                    ORDER BY MaThuoc 
+                    OFFSET ${offset} ROWS 
+                    FETCH NEXT ${pagesize} ROWS ONLY`);
+        let totalResult = await pool.request()  
+            .input('query', sql.NVarChar, `%${searchTerm }%`)
+            .query('SELECT COUNT(*) AS totalProducts FROM Thuoc WHERE TenThuoc LIKE @query OR CongDung LIKE @query');
+        const totalProducts = totalResult.recordset[0].totalProducts;
+        res.status(200).json({
+            products: result.recordset,
+            totalProducts: totalProducts,
+        });
     } catch (error) {
         console.log(error);
         return res.status(500).send("Internal Server Error");
